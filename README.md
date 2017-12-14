@@ -16,7 +16,8 @@ Caso precise reiniciar o banco digite o seguinte comando.<br>
 Agora para instalar o validador Passport execute o comando abaixo.<br>
 `php artisan passaport:install`
 
-echo "127.0.0.1 tangoseed.dev" >> /etc/hosts
+Se você estiver usando Linux ou MAC utilize o comando abaixo para configurar uma URL local
+`echo "127.0.0.1 tangoseed.dev" >> /etc/hosts`
 
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
