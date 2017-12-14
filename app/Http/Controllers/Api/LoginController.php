@@ -25,7 +25,6 @@ class LoginController extends Controller
             return response(['message' => 'No active user session was found'], 404);
         }
 
-        // Taken from: https://laracasts.com/discuss/channels/laravel/laravel-53-passport-password-grant-logout
         $request->user('api')->token()->revoke();
 
         Auth::guard()->logout();
