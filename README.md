@@ -1,5 +1,23 @@
 ![TangoSeed](tangoseed.jpg)
 
+## Instalação
+Primeiro instale as dependências com o comando abaixo. <br>
+`composer install`
+
+Renomeie o arquivo .env.example para .env e digite o seguinte comando em seu terminal.<br>
+`php artisan key:generate`
+
+Para gerar o banco digite o comando abaixo.<br>
+`php artisan migrate --seed`
+
+Caso precise reiniciar o banco digite o seguinte comando.<br>
+`php artisan migrate:refresh --seed `
+
+Agora para instalar o validador Passport execute o comando abaixo.<br>
+`php artisan passaport:install`
+
+echo "127.0.0.1 tangoseed.dev" >> /etc/hosts
+
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 <p align="center">
