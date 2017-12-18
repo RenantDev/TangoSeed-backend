@@ -17,4 +17,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/logout', 'Api\LoginController@logout');
+Route::post('/logout', 'Api\Acl\LoginController@logout');
