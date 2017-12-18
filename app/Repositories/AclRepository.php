@@ -10,5 +10,7 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  */
 interface AclRepository extends RepositoryInterface
 {
-    //
+
+
+
 }
