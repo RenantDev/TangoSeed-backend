@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Entities\User;
+use App\Entities\Api\Acl\Grupo;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,11 +23,15 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UsersTableSeeder::class);
         factory(User::class, 150)->create();
+//        factory(Grupo::class, 10)->create();
+        $this->call(GruposTableSeeder::class);
+
     }
 
     // Gera apenas as informações basicas para rodar o sistema
     private function production()
     {
         $this->call(UsersTableSeeder::class);
+        $this->call(GruposTableSeeder::class);
     }
 }

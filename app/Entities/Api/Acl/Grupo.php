@@ -12,6 +12,9 @@ class Grupo extends Model implements Transformable
 
     protected $table = "grupos";
 
-    protected $fillable = [];
+//    protected $fillable = [
+//        'titulo',
+//        'descricao'
+//    ];
 
 }

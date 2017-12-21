@@ -14,7 +14,7 @@ class GrupoTransformer extends TransformerAbstract
 
     /**
      * Transform the Grupo entity
-     * @param App\Entities\Api\Acl\Grupo $model
+     * @param Grupo $model
      *
      * @return array
      */
@@ -23,7 +23,9 @@ class GrupoTransformer extends TransformerAbstract
         return [
             'id'         => (int) $model->id,
 
-            /* place your other model properties here */
+            'titulo' => $model->titulo,
+            'descricao' => $model->descricao,
+
 
             'created_at' => $model->created_at,
             'updated_at' => $model->updated_at
