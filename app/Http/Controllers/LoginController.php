@@ -18,6 +18,14 @@ class LoginController extends Controller
         return Auth::guard('api');
     }
 
+    public function loginStatus (){
+        if ($this->guard()->check()) {
+            return response(['status' => true]);
+        } else{
+            return response(['status' => false]);
+        }
+    }
+
     public function logout(Request $request)
     {
         if (!$this->guard()->check()) {

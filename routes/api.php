@@ -17,4 +17,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return response()->json($request->user());
 });
 
+Route::get('/login/status', 'LoginController@loginStatus');
 Route::post('/logout', 'LoginController@logout');
