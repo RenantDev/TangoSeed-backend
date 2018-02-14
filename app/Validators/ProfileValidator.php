@@ -10,7 +10,7 @@ class ProfileValidator extends LaravelValidator
 
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
-            'user_id',
+            'user_id' => 'requiered',
             'avatar',
             'first_name' => 'requiered',
             'last_name' => 'requiered',
