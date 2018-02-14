@@ -30,6 +30,7 @@ class ProfileTransformer extends TransformerAbstract
             'ddd' => (string) $model->ddd,
             'cell_phone' => (string) $model->cell_phone,
             'gender' => (int) $model->gender,
+            'status' => (int) $model->gender,
 
             'created_at' => $model->created_at,
             'updated_at' => $model->updated_at
