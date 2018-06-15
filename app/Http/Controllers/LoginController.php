@@ -18,23 +18,26 @@ class LoginController extends Controller
         return Auth::guard('api');
     }
 
-    public function loginStatus (){
+    public function loginStatus()
+    {
         if ($this->guard()->check()) {
             return response(['status' => true]);
-        } else{
+        } else {
             return response(['status' => false]);
         }
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
-        if (!$this->guard()->check()) {
-            return response(['message' => 'No active user session was found'], 404);
+        try {
+            if (!$this->guard()->check()) {
+                return response(['error' => true, 'message' => __('auth.api_token_failed')], 404);
+            } else {
+                $this->guard()->user()->token()->revoke();
+                return response(['success' => true, 'message' => __('auth.api_token_logout')]);
+            }
+        } catch (\Exception $e) {
+            return response(['error' => true, 'message' => __('auth.api_token_failed')], 404);
         }
-        $request->user('api')->token()->revoke();
-        Auth::guard()->logout();
-        Session::flush();
-        Session::regenerate();
-        return response(['message' => 'User was logged out']);
     }
 }
