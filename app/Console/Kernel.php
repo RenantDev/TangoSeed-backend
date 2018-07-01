@@ -44,5 +44,7 @@ class Kernel extends ConsoleKernel
 
     protected $routeMiddleware = [
         'client' => CheckClientCredentials::class,
+        'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
+        'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
     ];
 }

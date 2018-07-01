@@ -20,6 +20,7 @@ Route::middleware('auth:api')->group(function () {
     });
 });
 
+Route::post('/login', 'LoginController@loginOn');
 Route::get('/status', 'LoginController@loginStatus');
 
 
