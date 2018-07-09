@@ -64,14 +64,13 @@ class LoginsController extends Controller
 
         try {
 
+            $request->merge(['remember_token' => str_random(10)]);
+
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-            $login = $this->repository->create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'remember_token' => str_random(10),
-            ]);
+            $request->merge(['password' => bcrypt($request->password)]);
+
+            $login = $this->repository->create($request->all());
 
             $response = [
                 'message' => __('admin.users.create.success'),

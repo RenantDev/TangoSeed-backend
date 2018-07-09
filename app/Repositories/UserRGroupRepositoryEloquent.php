@@ -14,6 +14,12 @@ use App\Validators\UserRGroupValidator;
  */
 class UserRGroupRepositoryEloquent extends BaseRepository implements UserRGroupRepository
 {
+
+    protected $fieldSearchable = [
+        'user_id',
+        'group_id'
+    ];
+
     /**
      * Specify Model class name
      *

@@ -12,8 +12,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->developer();
-        //$this->production();
+//        $this->developer();
+        $this->production();
 
     }
 
@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UsersTableSeeder::class);
         factory(User::class, 150)->create();
-//        factory(Grupo::class, 10)->create();
 
     }
 

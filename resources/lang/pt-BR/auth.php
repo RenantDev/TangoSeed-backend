@@ -13,7 +13,8 @@ return [
     |
     */
 
-    'failed' => 'Essas credenciais não correspondem aos nossos registros.',
+    'failed' => 'Informações de acesso invalidas!',
     'throttle' => 'Muitas tentativas de login. Tente novamente em :seconds segundos.',
+    'api_token_logout' => 'Logout efetuado com sucesso!'
 
 ];

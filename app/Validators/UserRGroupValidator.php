@@ -12,10 +12,6 @@ class UserRGroupValidator extends LaravelValidator
         ValidatorInterface::RULE_CREATE => [
             'user_id' => 'required',
             'group_id' => 'required'
-        ],
-        ValidatorInterface::RULE_UPDATE => [
-            'user_id' => 'required',
-            'group_id' => 'required'
-        ],
+        ]
     ];
 }

@@ -18,16 +18,7 @@ class Login extends Model implements Transformable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'remember_token',
+        'name', 'email', 'password', 'remember_token', 'status'
     ];
 
 }

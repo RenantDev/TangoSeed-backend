@@ -9,9 +9,12 @@ use App\Http\Requests;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\UserRGroupCreateRequest;
-use App\Http\Requests\UserRGroupUpdateRequest;
 use App\Repositories\UserRGroupRepository;
 use App\Validators\UserRGroupValidator;
+use App\Repositories\GroupRepository;
+use App\Validators\GroupValidator;
+
+use App\Entities\Group;
 
 
 class UserRGroupsController extends Controller
@@ -21,16 +24,26 @@ class UserRGroupsController extends Controller
      * @var UserRGroupRepository
      */
     protected $repository;
+    protected $repositoryGroup;
 
     /**
      * @var UserRGroupValidator
      */
     protected $validator;
+    protected $validatorGroup;
 
-    public function __construct(UserRGroupRepository $repository, UserRGroupValidator $validator)
+    public function __construct(
+        UserRGroupRepository $repository,
+        UserRGroupValidator $validator,
+        GroupRepository $repositoryGroup,
+        GroupValidator $validatorGroup
+
+    )
     {
         $this->repository = $repository;
         $this->validator  = $validator;
+        $this->repositoryGroup = $repositoryGroup;
+        $this->validatorGroup  = $validatorGroup;
     }
 
 
@@ -41,17 +54,37 @@ class UserRGroupsController extends Controller
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $userRGroups = $this->repository->all();
+        try{
+            $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+            $this->repositoryGroup->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+            $userRGroups = $this->repository->all(['id', 'user_id', 'group_id', 'created_at', 'updated_at']);
+            $groups = $this->repositoryGroup->all(['id', 'title', 'description']);
 
-        if (request()->wantsJson()) {
+            foreach ($userRGroups AS $key => $value){
+                foreach ($groups AS $keyGroup => $valueGroup){
+                    if($groups[$keyGroup]['id'] == $userRGroups[$key]['group_id']){
+                        $aux1 = json_decode(json_encode($userRGroups[$key]), true);
+                        $aux2 = json_decode(json_encode($groups[$keyGroup]), true);
+                        $groupsList[$key] = array_merge($aux2, $aux1);
+                        continue;
+                    }
+                }
+            }
 
-            return response()->json([
-                'data' => $userRGroups,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'data' => $groupsList,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'O usuário não faz parte de um grupo.',
+                ]);
+            }
         }
 
-        return view('userRGroups.index', compact('userRGroups'));
     }
 
     /**
@@ -71,106 +104,22 @@ class UserRGroupsController extends Controller
             $userRGroup = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'UserRGroup created.',
+                'message' => __('admin.users-r-group.create.success'),
                 'data'    => $userRGroup->toArray(),
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
+        } catch (\Exception $e) {
             if ($request->wantsJson()) {
                 return response()->json([
                     'error'   => true,
-                    'message' => $e->getMessageBag()
+                    'message' => __('admin.users-r-group.create.error')
                 ]);
             }
 
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $userRGroup = $this->repository->find($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $userRGroup,
-            ]);
-        }
-
-        return view('userRGroups.show', compact('userRGroup'));
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $userRGroup = $this->repository->find($id);
-
-        return view('userRGroups.edit', compact('userRGroup'));
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  UserRGroupUpdateRequest $request
-     * @param  string            $id
-     *
-     * @return Response
-     */
-    public function update(UserRGroupUpdateRequest $request, $id)
-    {
-
-        try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $userRGroup = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'UserRGroup updated.',
-                'data'    => $userRGroup->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -184,16 +133,22 @@ class UserRGroupsController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'UserRGroup deleted.',
-                'deleted' => $deleted,
-            ]);
+        try{
+            $deleted = $this->repository->delete($id);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('admin.users-r-group.delete.success'),
+                    'deleted' => $deleted,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.users-r-group.delete.error')
+                ]);
+            }
         }
 
-        return redirect()->back()->with('message', 'UserRGroup deleted.');
     }
 }

@@ -19,7 +19,7 @@ class CreateGroupsTable extends Migration
 
             $table->string('title', 60)->unique();
             $table->text('description');
-            $table->boolean('status');
+            $table->boolean('status')->default(true);
 
             $table->timestamps();
 		});

@@ -23,6 +23,16 @@ return [
             'error' => 'O usuário não existe.'
         ]
     ],
+    'users-r-group' => [
+        'create' => [
+            'success' => 'Usuário vinculado com sucesso!',
+            'error' => 'Não foi possível vincular o usuário ao grupo.'
+        ],
+        'delete' => [
+            'success' => 'Usuário removido do grupo com sucesso!',
+            'error' => 'Não foi possível remover o usuário do grupo.'
+        ]
+    ],
     'groups' => [
         'create' => [
             'success' => 'Grupo criado com sucesso!',
