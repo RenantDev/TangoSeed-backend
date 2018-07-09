@@ -1,19 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Entities\GroupRRole;
 
-class GroupRRoles extends Migration
+class CreateGroupRRolesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('group_r_roles', function(Blueprint $table) {
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('group_r_roles', function(Blueprint $table) {
             $table->increments('id');
 
             $table->integer('group_id')->unsigned();
@@ -26,16 +27,19 @@ class GroupRRoles extends Migration
             $table->unique(['group_id', 'role_id']);
 
             $table->timestamps();
-        });
-    }
+		});
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('group_r_roles');
-    }
+        GroupRRole::create(['group_id' => 1, 'role_id' => 1]);
+	}
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::drop('group_r_roles');
+	}
+
 }

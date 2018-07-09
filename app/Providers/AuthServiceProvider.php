@@ -26,15 +26,12 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        // valida usuário
         Passport::routes();
+
+        // define o tempo que o token e o refresh token tem de vida
         Passport::tokensExpireIn(now()->addDays(2));
         Passport::refreshTokensExpireIn(now()->addDays(5));
-        Passport::enableImplicitGrant();
-
-        Passport::tokensCan([
-            'place-orders' => 'Place orders',
-            'check-status' => 'Check order status',
-        ]);
 
     }
 }

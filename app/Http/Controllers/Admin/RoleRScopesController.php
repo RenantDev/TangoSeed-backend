@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,26 +8,26 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
-use App\Http\Requests\GroupCreateRequest;
-use App\Http\Requests\GroupUpdateRequest;
-use App\Repositories\GroupRepository;
-use App\Validators\GroupValidator;
+use App\Http\Requests\RoleRScopeCreateRequest;
+use App\Http\Requests\RoleRScopeUpdateRequest;
+use App\Repositories\RoleRScopeRepository;
+use App\Validators\RoleRScopeValidator;
 
 
-class GroupsController extends Controller
+class RoleRScopesController extends Controller
 {
 
     /**
-     * @var GroupRepository
+     * @var RoleRScopeRepository
      */
     protected $repository;
 
     /**
-     * @var GroupValidator
+     * @var RoleRScopeValidator
      */
     protected $validator;
 
-    public function __construct(GroupRepository $repository, GroupValidator $validator)
+    public function __construct(RoleRScopeRepository $repository, RoleRScopeValidator $validator)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
@@ -42,37 +42,37 @@ class GroupsController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $groups = $this->repository->all();
+        $roleRScopes = $this->repository->all();
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $groups,
+                'data' => $roleRScopes,
             ]);
         }
 
-        return view('groups.index', compact('groups'));
+        return view('roleRScopes.index', compact('roleRScopes'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  GroupCreateRequest $request
+     * @param  RoleRScopeCreateRequest $request
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(GroupCreateRequest $request)
+    public function store(RoleRScopeCreateRequest $request)
     {
 
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-            $group = $this->repository->create($request->all());
+            $roleRScope = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'Group created.',
-                'data'    => $group->toArray(),
+                'message' => 'RoleRScope created.',
+                'data'    => $roleRScope->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -103,16 +103,16 @@ class GroupsController extends Controller
      */
     public function show($id)
     {
-        $group = $this->repository->find($id);
+        $roleRScope = $this->repository->find($id);
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $group,
+                'data' => $roleRScope,
             ]);
         }
 
-        return view('groups.show', compact('group'));
+        return view('roleRScopes.show', compact('roleRScope'));
     }
 
 
@@ -126,32 +126,32 @@ class GroupsController extends Controller
     public function edit($id)
     {
 
-        $group = $this->repository->find($id);
+        $roleRScope = $this->repository->find($id);
 
-        return view('groups.edit', compact('group'));
+        return view('roleRScopes.edit', compact('roleRScope'));
     }
 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  GroupUpdateRequest $request
+     * @param  RoleRScopeUpdateRequest $request
      * @param  string            $id
      *
      * @return Response
      */
-    public function update(GroupUpdateRequest $request, $id)
+    public function update(RoleRScopeUpdateRequest $request, $id)
     {
 
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            $group = $this->repository->update($request->all(), $id);
+            $roleRScope = $this->repository->update($request->all(), $id);
 
             $response = [
-                'message' => 'Group updated.',
-                'data'    => $group->toArray(),
+                'message' => 'RoleRScope updated.',
+                'data'    => $roleRScope->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -189,11 +189,11 @@ class GroupsController extends Controller
         if (request()->wantsJson()) {
 
             return response()->json([
-                'message' => 'Group deleted.',
+                'message' => 'RoleRScope deleted.',
                 'deleted' => $deleted,
             ]);
         }
 
-        return redirect()->back()->with('message', 'Group deleted.');
+        return redirect()->back()->with('message', 'RoleRScope deleted.');
     }
 }

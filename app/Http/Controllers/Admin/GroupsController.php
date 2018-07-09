@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,26 +8,26 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
-use App\Http\Requests\ScopeCreateRequest;
-use App\Http\Requests\ScopeUpdateRequest;
-use App\Repositories\ScopeRepository;
-use App\Validators\ScopeValidator;
+use App\Http\Requests\GroupCreateRequest;
+use App\Http\Requests\GroupUpdateRequest;
+use App\Repositories\GroupRepository;
+use App\Validators\GroupValidator;
 
 
-class ScopesController extends Controller
+class GroupsController extends Controller
 {
 
     /**
-     * @var ScopeRepository
+     * @var GroupRepository
      */
     protected $repository;
 
     /**
-     * @var ScopeValidator
+     * @var GroupValidator
      */
     protected $validator;
 
-    public function __construct(ScopeRepository $repository, ScopeValidator $validator)
+    public function __construct(GroupRepository $repository, GroupValidator $validator)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
@@ -42,45 +42,39 @@ class ScopesController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $scopes = $this->repository->all();
+        $groups = $this->repository->all();
 
         if (request()->wantsJson()) {
-
             return response()->json([
-                'data' => $scopes,
+                'data' => $groups,
             ]);
         }
-
-        return view('scopes.index', compact('scopes'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  ScopeCreateRequest $request
+     * @param  GroupCreateRequest $request
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(ScopeCreateRequest $request)
+    public function store(GroupCreateRequest $request)
     {
 
         try {
-
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-            $scope = $this->repository->create($request->all());
+            $group = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'Scope created.',
-                'data'    => $scope->toArray(),
+                'message' => 'Group created.',
+                'data'    => $group->toArray(),
             ];
 
             if ($request->wantsJson()) {
 
                 return response()->json($response);
             }
-
-            return redirect()->back()->with('message', $response['message']);
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
@@ -88,8 +82,6 @@ class ScopesController extends Controller
                     'message' => $e->getMessageBag()
                 ]);
             }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -103,74 +95,52 @@ class ScopesController extends Controller
      */
     public function show($id)
     {
-        $scope = $this->repository->find($id);
+        $group = $this->repository->find($id);
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $scope,
+                'data' => $group,
             ]);
         }
-
-        return view('scopes.show', compact('scope'));
     }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $scope = $this->repository->find($id);
-
-        return view('scopes.edit', compact('scope'));
-    }
-
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  ScopeUpdateRequest $request
+     * @param  GroupUpdateRequest $request
      * @param  string            $id
      *
      * @return Response
      */
-    public function update(ScopeUpdateRequest $request, $id)
+    public function update(GroupUpdateRequest $request, $id)
     {
 
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            $scope = $this->repository->update($request->all(), $id);
+            $group = $this->repository->update($request->all(), $id);
 
             $response = [
-                'message' => 'Scope updated.',
-                'data'    => $scope->toArray(),
+                'message' => 'Group updated.',
+                'data'    => $group->toArray(),
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
+        } catch (\Exception $e) {
 
             if ($request->wantsJson()) {
 
                 return response()->json([
                     'error'   => true,
-                    'message' => $e->getMessageBag()
+                    'message' => 'erro'
                 ]);
             }
 
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -189,11 +159,10 @@ class ScopesController extends Controller
         if (request()->wantsJson()) {
 
             return response()->json([
-                'message' => 'Scope deleted.',
+                'message' => 'Group deleted.',
                 'deleted' => $deleted,
             ]);
         }
 
-        return redirect()->back()->with('message', 'Scope deleted.');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -8,26 +8,26 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
-use App\Http\Requests\RoleCreateRequest;
-use App\Http\Requests\RoleUpdateRequest;
-use App\Repositories\RoleRepository;
-use App\Validators\RoleValidator;
+use App\Http\Requests\UserRGroupCreateRequest;
+use App\Http\Requests\UserRGroupUpdateRequest;
+use App\Repositories\UserRGroupRepository;
+use App\Validators\UserRGroupValidator;
 
 
-class RolesController extends Controller
+class UserRGroupsController extends Controller
 {
 
     /**
-     * @var RoleRepository
+     * @var UserRGroupRepository
      */
     protected $repository;
 
     /**
-     * @var RoleValidator
+     * @var UserRGroupValidator
      */
     protected $validator;
 
-    public function __construct(RoleRepository $repository, RoleValidator $validator)
+    public function __construct(UserRGroupRepository $repository, UserRGroupValidator $validator)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
@@ -42,37 +42,37 @@ class RolesController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $roles = $this->repository->all();
+        $userRGroups = $this->repository->all();
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $roles,
+                'data' => $userRGroups,
             ]);
         }
 
-        return view('roles.index', compact('roles'));
+        return view('userRGroups.index', compact('userRGroups'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  RoleCreateRequest $request
+     * @param  UserRGroupCreateRequest $request
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(RoleCreateRequest $request)
+    public function store(UserRGroupCreateRequest $request)
     {
 
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-            $role = $this->repository->create($request->all());
+            $userRGroup = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'Role created.',
-                'data'    => $role->toArray(),
+                'message' => 'UserRGroup created.',
+                'data'    => $userRGroup->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -103,16 +103,16 @@ class RolesController extends Controller
      */
     public function show($id)
     {
-        $role = $this->repository->find($id);
+        $userRGroup = $this->repository->find($id);
 
         if (request()->wantsJson()) {
 
             return response()->json([
-                'data' => $role,
+                'data' => $userRGroup,
             ]);
         }
 
-        return view('roles.show', compact('role'));
+        return view('userRGroups.show', compact('userRGroup'));
     }
 
 
@@ -126,32 +126,32 @@ class RolesController extends Controller
     public function edit($id)
     {
 
-        $role = $this->repository->find($id);
+        $userRGroup = $this->repository->find($id);
 
-        return view('roles.edit', compact('role'));
+        return view('userRGroups.edit', compact('userRGroup'));
     }
 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  RoleUpdateRequest $request
+     * @param  UserRGroupUpdateRequest $request
      * @param  string            $id
      *
      * @return Response
      */
-    public function update(RoleUpdateRequest $request, $id)
+    public function update(UserRGroupUpdateRequest $request, $id)
     {
 
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            $role = $this->repository->update($request->all(), $id);
+            $userRGroup = $this->repository->update($request->all(), $id);
 
             $response = [
-                'message' => 'Role updated.',
-                'data'    => $role->toArray(),
+                'message' => 'UserRGroup updated.',
+                'data'    => $userRGroup->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -189,11 +189,11 @@ class RolesController extends Controller
         if (request()->wantsJson()) {
 
             return response()->json([
-                'message' => 'Role deleted.',
+                'message' => 'UserRGroup deleted.',
                 'deleted' => $deleted,
             ]);
         }
 
-        return redirect()->back()->with('message', 'Role deleted.');
+        return redirect()->back()->with('message', 'UserRGroup deleted.');
     }
 }

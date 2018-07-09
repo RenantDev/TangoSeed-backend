@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Entities\Role;
 
 class CreateRolesTable extends Migration
 {
@@ -16,12 +17,14 @@ class CreateRolesTable extends Migration
 		Schema::create('roles', function(Blueprint $table) {
             $table->increments('id');
 
-            $table->string('tag', 20);
-            $table->string('title', 60);
+            $table->string('title', 60)->unique();
             $table->text('description');
 
             $table->timestamps();
 		});
+
+
+        Role::create(['title' => 'Developer', 'description' => 'Funções do Desenvolvedor']);
 
 	}
 

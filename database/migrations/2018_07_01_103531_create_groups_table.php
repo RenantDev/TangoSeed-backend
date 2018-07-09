@@ -17,14 +17,16 @@ class CreateGroupsTable extends Migration
 		Schema::create('groups', function(Blueprint $table) {
             $table->increments('id');
 
-            $table->string('title', 60);
+            $table->string('title', 60)->unique();
             $table->text('description');
             $table->boolean('status');
 
             $table->timestamps();
 		});
 
-		Group::create(['title' => 'none', 'description' => 'none', 'status' => true]);
+        Group::create(['title' => 'Developer', 'description' => 'Desenvolvedor do Sistema', 'status' => true]);
+        Group::create(['title' => 'Administrador', 'description' => 'Administrador do Sistema', 'status' => true]);
+        Group::create(['title' => 'Cliente', 'description' => 'Usuário comum do Sistema', 'status' => true]);
 	}
 
 	/**

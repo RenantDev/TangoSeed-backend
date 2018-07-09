@@ -5,19 +5,17 @@ namespace App\Validators;
 use \Prettus\Validator\Contracts\ValidatorInterface;
 use \Prettus\Validator\LaravelValidator;
 
-class LoginValidator extends LaravelValidator
+class RoleRScopeValidator extends LaravelValidator
 {
 
     protected $rules = [
         ValidatorInterface::RULE_CREATE => [
-            'name' => 'required',
-            'email' => 'required | unique:users',
-            'password' => 'required'
+            'role_id' => 'required',
+            'scope_id' => 'required'
         ],
         ValidatorInterface::RULE_UPDATE => [
-            'name' => '',
-            'email' => 'unique:users',
-            'password' => ''
+            'role_id' => 'required',
+            'scope_id' => 'required'
         ],
     ];
 }
