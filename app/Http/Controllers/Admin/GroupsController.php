@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -67,12 +68,11 @@ class GroupsController extends Controller
             $group = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'Group created.',
+                'message' => __('admin.groups.create.success'),
                 'data'    => $group->toArray(),
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
         } catch (ValidatorException $e) {
@@ -95,13 +95,21 @@ class GroupsController extends Controller
      */
     public function show($id)
     {
-        $group = $this->repository->find($id);
+        try{
+            $group = $this->repository->find($id);
 
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $group,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'data' => $group,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.groups.info.error')
+                ]);
+            }
         }
     }
 
@@ -123,21 +131,18 @@ class GroupsController extends Controller
             $group = $this->repository->update($request->all(), $id);
 
             $response = [
-                'message' => 'Group updated.',
+                'message' => __('admin.groups.update.success'),
                 'data'    => $group->toArray(),
             ];
 
             if ($request->wantsJson()) {
                 return response()->json($response);
             }
-
-        } catch (\Exception $e) {
-
+        } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
-
                 return response()->json([
                     'error'   => true,
-                    'message' => 'erro'
+                    'message' => $e->getMessageBag()
                 ]);
             }
 
@@ -154,14 +159,21 @@ class GroupsController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'Group deleted.',
-                'deleted' => $deleted,
-            ]);
+        try{
+            $deleted = $this->repository->delete($id);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'deleted' => $deleted,
+                    'message' => __('admin.groups.delete.success'),
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.groups.delete.error'),
+                ]);
+            }
         }
 
     }

@@ -24,7 +24,9 @@ class GroupCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title' => 'required | min: 3 | max: 60 | unique:groups',
+            'description' => '',
+            'status' => ''
         ];
     }
 }

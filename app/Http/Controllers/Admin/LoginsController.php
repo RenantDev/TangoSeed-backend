@@ -85,7 +85,7 @@ class LoginsController extends Controller
             if ($request->wantsJson()) {
                 return response()->json([
                     'error'   => true,
-                    'message' => __('admin.users.create.error')
+                    'message' => $e->getMessageBag()
                 ]);
             }
 

@@ -45,6 +45,9 @@ return [
         'delete' => [
             'success' => 'Grupo excluido com sucesso!',
             'error' => 'Não foi possível excluir o Grupo.'
+        ],
+        'info' => [
+            'error' => 'O grupo não existe.'
         ]
     ],
     'roles' => [

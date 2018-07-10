@@ -24,7 +24,7 @@ class CreateRolesTable extends Migration
 		});
 
 
-        Role::create(['title' => 'Developer', 'description' => 'Funções do Desenvolvedor']);
+        Role::create(['title' => 'Developer', 'description' => 'Função para Desenvolvedor']);
 
 	}
 

@@ -24,9 +24,9 @@ class LoginUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => '',
+            'name' => 'min: 3 | max: 120',
             'email' => 'unique:users',
-            'password' => ''
+            'password' => 'min: 3 | max: 30'
         ];
     }
 }
