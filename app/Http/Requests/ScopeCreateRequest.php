@@ -24,7 +24,9 @@ class ScopeCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'tag' => 'required | min: 3 | max: 60 | unique:roles',
+            'title' => 'required | min: 3 | max: 60',
+            'description' => ''
         ];
     }
 }

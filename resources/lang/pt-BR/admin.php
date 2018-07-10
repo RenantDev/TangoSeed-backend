@@ -67,16 +67,17 @@ return [
     ],
     'scopes' => [
         'create' => [
-            'success' => 'Extenção criada com sucesso!',
-            'error' => 'Não foi possível criar a nova Extenção.'
+            'success' => 'Extenção criada com sucesso!'
         ],
         'update' => [
-            'success' => 'Extenção atualizada com sucesso!',
-            'error' => 'Não foi possível atualizar a Extenção.'
+            'success' => 'Extenção atualizada com sucesso!'
         ],
         'delete' => [
             'success' => 'Extenção excluida com sucesso!',
             'error' => 'Não foi possível excluir a Extenção.'
+        ],
+        'info' => [
+            'error' => 'Esta extenção não existe.'
         ]
     ],
 ];

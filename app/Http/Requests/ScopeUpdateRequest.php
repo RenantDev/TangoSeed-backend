@@ -24,7 +24,9 @@ class ScopeUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'tag' => 'min: 3 | max: 60 | unique:roles',
+            'title' => 'min: 3 | max: 60',
+            'description' => ''
         ];
     }
 }

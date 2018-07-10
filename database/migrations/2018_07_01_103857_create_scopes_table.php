@@ -19,7 +19,7 @@ class CreateScopesTable extends Migration
 
             $table->string('tag', 60)->unique();
             $table->string('title', 60);
-            $table->text('description');
+            $table->text('description')->nullable();
 
             $table->timestamps();
         });

@@ -6,7 +6,7 @@ class UtilController extends Controller
 {
 
     // Converte qualquer string em um slug
-    public static function slug($string, $transform_space = '-') {
+    public function slug($string, $transform_space = '-') {
         $table = array(
             'Š' => 'S', 'š' => 's', 'Đ' => 'Dj', 'đ' => 'dj', 'Ž' => 'Z', 'ú' => 'u', 'û' => 'u',
             'ž' => 'z', 'Č' => 'C', 'č' => 'c', 'Ć' => 'C', 'ć' => 'c', 'ÿ' => 'y', 'Ŕ' => 'R',
@@ -35,7 +35,7 @@ class UtilController extends Controller
     }
 
     // Pega o IP do usuário
-    public static function clientIP() {
+    public function clientIP() {
         $REMOTE_ADDR = filter_input(INPUT_ENV, 'REMOTE_ADDR', FILTER_VALIDATE_IP);
         return $REMOTE_ADDR;
     }

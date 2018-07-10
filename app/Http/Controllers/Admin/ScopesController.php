@@ -13,6 +13,8 @@ use App\Http\Requests\ScopeUpdateRequest;
 use App\Repositories\ScopeRepository;
 use App\Validators\ScopeValidator;
 
+use App\Http\Controllers\UtilController;
+
 
 class ScopesController extends Controller
 {
@@ -22,15 +24,18 @@ class ScopesController extends Controller
      */
     protected $repository;
 
+    protected $util;
+
     /**
      * @var ScopeValidator
      */
     protected $validator;
 
-    public function __construct(ScopeRepository $repository, ScopeValidator $validator)
+    public function __construct(ScopeRepository $repository, ScopeValidator $validator, UtilController $util)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
+        $this->util = $util;
     }
 
 
@@ -64,12 +69,16 @@ class ScopesController extends Controller
 
         try {
 
+            if(!isset($request->tag)){
+                $request->merge(['tag' => $this->util->slug($request->title)]);
+            }
+
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
             $scope = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'Scope created.',
+                'message' => __('admin.scopes.create.success'),
                 'data'    => $scope->toArray(),
             ];
 
@@ -98,33 +107,23 @@ class ScopesController extends Controller
      */
     public function show($id)
     {
-        $scope = $this->repository->find($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $scope,
-            ]);
+        try{
+            $scope = $this->repository->find($id);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'data' => $scope,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.scopes.info.error')
+                ]);
+            }
         }
 
     }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $scope = $this->repository->find($id);
-
-        return view('scopes.edit', compact('scope'));
-    }
-
 
     /**
      * Update the specified resource in storage.
@@ -136,35 +135,26 @@ class ScopesController extends Controller
      */
     public function update(ScopeUpdateRequest $request, $id)
     {
-
         try {
-
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
             $scope = $this->repository->update($request->all(), $id);
 
             $response = [
-                'message' => 'Scope updated.',
+                'message' => __('admin.scopes.update.success'),
                 'data'    => $scope->toArray(),
             ];
-
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
         } catch (ValidatorException $e) {
-
             if ($request->wantsJson()) {
-
                 return response()->json([
                     'error'   => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -178,14 +168,21 @@ class ScopesController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'Scope deleted.',
-                'deleted' => $deleted,
-            ]);
+        try{
+            $deleted = $this->repository->delete($id);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('admin.scopes.delete.success'),
+                    'deleted' => $deleted,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.scopes.delete.error')
+                ]);
+            }
         }
     }
 }
