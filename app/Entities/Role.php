@@ -11,7 +11,6 @@ class Role extends Model implements Transformable
     use TransformableTrait;
 
     protected $fillable = [
-        'tag',
         'title',
         'description'
     ];

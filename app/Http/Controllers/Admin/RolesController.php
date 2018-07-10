@@ -45,7 +45,6 @@ class RolesController extends Controller
         $roles = $this->repository->all();
 
         if (request()->wantsJson()) {
-
             return response()->json([
                 'data' => $roles,
             ]);
@@ -61,20 +60,15 @@ class RolesController extends Controller
      */
     public function store(RoleCreateRequest $request)
     {
-
         try {
-
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
-
             $role = $this->repository->create($request->all());
-
             $response = [
-                'message' => 'Role created.',
+                'message' => __('admin.roles.create.success'),
                 'data'    => $role->toArray(),
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
         } catch (ValidatorException $e) {
@@ -97,32 +91,23 @@ class RolesController extends Controller
      */
     public function show($id)
     {
-        $role = $this->repository->find($id);
+        try{
+            $role = $this->repository->find($id);
 
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $role,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'data' => $role,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.roles.info.error')
+                ]);
+            }
         }
     }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $role = $this->repository->find($id);
-
-        return view('roles.edit', compact('role'));
-    }
-
 
     /**
      * Update the specified resource in storage.
@@ -140,20 +125,16 @@ class RolesController extends Controller
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
             $role = $this->repository->update($request->all(), $id);
-
             $response = [
-                'message' => 'Role updated.',
+                'message' => __('admin.roles.update.success'),
                 'data'    => $role->toArray(),
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
         } catch (ValidatorException $e) {
-
             if ($request->wantsJson()) {
-
                 return response()->json([
                     'error'   => true,
                     'message' => $e->getMessageBag()
@@ -172,13 +153,22 @@ class RolesController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
+        try{
+            $deleted = $this->repository->delete($id);
 
-        if (request()->wantsJson()) {
-            return response()->json([
-                'message' => 'Role deleted.',
-                'deleted' => $deleted,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('admin.roles.delete.success'),
+                    'deleted' => $deleted,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.roles.delete.error'),
+                ]);
+            }
         }
     }
 }

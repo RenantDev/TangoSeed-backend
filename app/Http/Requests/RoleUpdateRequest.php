@@ -24,7 +24,8 @@ class RoleUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'title' => 'min: 3 | max: 60 | unique:roles',
+            'description' => ''
         ];
     }
 }

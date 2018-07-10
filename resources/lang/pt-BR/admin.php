@@ -52,16 +52,17 @@ return [
     ],
     'roles' => [
         'create' => [
-            'success' => 'Função criada com sucesso!',
-            'error' => 'Não foi possível criar a nova função.'
+            'success' => 'Função criada com sucesso!'
         ],
         'update' => [
-            'success' => 'Função atualizada com sucesso!',
-            'error' => 'Não foi possível atualizar a Função.'
+            'success' => 'Função atualizada com sucesso!'
         ],
         'delete' => [
             'success' => 'Função excluida com sucesso!',
             'error' => 'Não foi possível excluir a Função.'
+        ],
+        'info' => [
+            'error' => 'Esta função não existe.'
         ]
     ],
     'scopes' => [
