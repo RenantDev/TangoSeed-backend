@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Repositories\ScopeRepository;
+use App\Validators\ScopeValidator;
 
-use App\Http\Requests;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
+
 use App\Http\Requests\RoleRScopeCreateRequest;
-use App\Http\Requests\RoleRScopeUpdateRequest;
 use App\Repositories\RoleRScopeRepository;
 use App\Validators\RoleRScopeValidator;
 
@@ -21,16 +21,25 @@ class RoleRScopesController extends Controller
      * @var RoleRScopeRepository
      */
     protected $repository;
+    protected $repositoryScopes;
 
     /**
      * @var RoleRScopeValidator
      */
     protected $validator;
+    protected $validatorScopes;
 
-    public function __construct(RoleRScopeRepository $repository, RoleRScopeValidator $validator)
+    public function __construct(
+        RoleRScopeRepository $repository,
+        RoleRScopeValidator $validator,
+        ScopeRepository $repositoryScopes,
+        ScopeValidator $validatorScopes
+    )
     {
         $this->repository = $repository;
         $this->validator  = $validator;
+        $this->repositoryScopes = $repositoryScopes;
+        $this->validatorScopes  = $validatorScopes;
     }
 
 
@@ -41,17 +50,36 @@ class RoleRScopesController extends Controller
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $roleRScopes = $this->repository->all();
+        try{
+            $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+            $this->repositoryScopes->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+            $roleRScopes = $this->repository->all(['id', 'role_id', 'scope_id', 'created_at', 'updated_at']);
+            $scopes = $this->repositoryScopes->all(['id', 'tag', 'title', 'description']);
 
-        if (request()->wantsJson()) {
+            foreach ($roleRScopes AS $key => $value){
+                foreach ($scopes AS $keyScope => $valueScope){
+                    if($scopes[$keyScope]['id'] == $roleRScopes[$key]['scope_id']){
+                        $aux1 = json_decode(json_encode($roleRScopes[$key]), true);
+                        $aux2 = json_decode(json_encode($scopes[$keyScope]), true);
+                        $scopeList[$key] = array_merge($aux2, $aux1);
+                        continue;
+                    }
+                }
+            }
 
-            return response()->json([
-                'data' => $roleRScopes,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'data' => $scopeList,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.role-r-scopes.info.error'),
+                ]);
+            }
         }
-
-        return view('roleRScopes.index', compact('roleRScopes'));
     }
 
     /**
@@ -71,7 +99,7 @@ class RoleRScopesController extends Controller
             $roleRScope = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'RoleRScope created.',
+                'message' => __('admin.role-r-scopes.create.success'),
                 'data'    => $roleRScope->toArray(),
             ];
 
@@ -80,7 +108,6 @@ class RoleRScopesController extends Controller
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
@@ -89,88 +116,6 @@ class RoleRScopesController extends Controller
                 ]);
             }
 
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $roleRScope = $this->repository->find($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $roleRScope,
-            ]);
-        }
-
-        return view('roleRScopes.show', compact('roleRScope'));
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $roleRScope = $this->repository->find($id);
-
-        return view('roleRScopes.edit', compact('roleRScope'));
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  RoleRScopeUpdateRequest $request
-     * @param  string            $id
-     *
-     * @return Response
-     */
-    public function update(RoleRScopeUpdateRequest $request, $id)
-    {
-
-        try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $roleRScope = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'RoleRScope updated.',
-                'data'    => $roleRScope->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -184,16 +129,23 @@ class RoleRScopesController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
+        try{
+            $deleted = $this->repository->delete($id);
 
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'RoleRScope deleted.',
-                'deleted' => $deleted,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('admin.role-r-scopes.delete.success'),
+                    'deleted' => $deleted,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('admin.role-r-scopes.delete.error'),
+                    'deleted' => $deleted,
+                ]);
+            }
         }
 
-        return redirect()->back()->with('message', 'RoleRScope deleted.');
     }
 }

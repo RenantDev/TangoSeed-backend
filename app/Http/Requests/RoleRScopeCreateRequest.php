@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class role_r_scopeUpdateRequest extends FormRequest
+class RoleRScopeCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,8 @@ class role_r_scopeUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'role_id' => 'required',
+            'scope_id' => 'required'
         ];
     }
 }

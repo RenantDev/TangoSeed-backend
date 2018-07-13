@@ -12,10 +12,6 @@ class RoleRScopeValidator extends LaravelValidator
         ValidatorInterface::RULE_CREATE => [
             'role_id' => 'required',
             'scope_id' => 'required'
-        ],
-        ValidatorInterface::RULE_UPDATE => [
-            'role_id' => 'required',
-            'scope_id' => 'required'
-        ],
+        ]
     ];
 }

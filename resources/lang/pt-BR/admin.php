@@ -81,6 +81,19 @@ return [
             'error' => 'Esta função não existe.'
         ]
     ],
+    'role-r-scopes' => [
+        'create' => [
+            'success' => 'Extenção vinculada com sucesso!',
+            'error' => 'Não foi possível vincular a extenção na função.'
+        ],
+        'delete' => [
+            'success' => 'Extenção removida da função com sucesso!',
+            'error' => 'Não foi possível remover a extenção da função.'
+        ],
+        'info' => [
+            'error' => 'Nenhuma extenção foi definida para este grupo.'
+        ]
+    ],
     'scopes' => [
         'create' => [
             'success' => 'Extenção criada com sucesso!'
