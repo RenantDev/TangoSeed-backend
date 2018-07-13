@@ -12,10 +12,6 @@ class GroupRRoleValidator extends LaravelValidator
         ValidatorInterface::RULE_CREATE => [
             'group_id' => 'required',
             'role_id' => 'required'
-        ],
-        ValidatorInterface::RULE_UPDATE => [
-            'group_id' => 'required',
-            'role_id' => 'required'
-        ],
+        ]
     ];
 }

@@ -23,7 +23,7 @@ return [
             'error' => 'O usuário não existe.'
         ]
     ],
-    'users-r-group' => [
+    'users-r-groups' => [
         'create' => [
             'success' => 'Usuário vinculado com sucesso!',
             'error' => 'Não foi possível vincular o usuário ao grupo.'
@@ -31,6 +31,9 @@ return [
         'delete' => [
             'success' => 'Usuário removido do grupo com sucesso!',
             'error' => 'Não foi possível remover o usuário do grupo.'
+        ],
+        'info' => [
+            'error' => 'O usuário não faz parte de um grupo.'
         ]
     ],
     'groups' => [
@@ -48,6 +51,19 @@ return [
         ],
         'info' => [
             'error' => 'O grupo não existe.'
+        ]
+    ],
+    'group-r-roles' => [
+        'create' => [
+            'success' => 'Função vinculada com sucesso!',
+            'error' => 'Não foi possível vincular a função ao grupo.'
+        ],
+        'delete' => [
+            'success' => 'Função removida do grupo com sucesso!',
+            'error' => 'Não foi possível remover a função do grupo.'
+        ],
+        'info' => [
+            'error' => 'Nenhuma função foi definida para este grupo.'
         ]
     ],
     'roles' => [

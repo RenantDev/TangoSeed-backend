@@ -80,7 +80,7 @@ class UserRGroupsController extends Controller
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,
-                    'message' => 'O usuário não faz parte de um grupo.',
+                    'message' => __('admin.user-r-groups.info.error'),
                 ]);
             }
         }
@@ -104,7 +104,7 @@ class UserRGroupsController extends Controller
             $userRGroup = $this->repository->create($request->all());
 
             $response = [
-                'message' => __('admin.users-r-group.create.success'),
+                'message' => __('admin.users-r-groups.create.success'),
                 'data'    => $userRGroup->toArray(),
             ];
 
@@ -116,7 +116,7 @@ class UserRGroupsController extends Controller
             if ($request->wantsJson()) {
                 return response()->json([
                     'error'   => true,
-                    'message' => __('admin.users-r-group.create.error')
+                    'message' => __('admin.users-r-groups.create.error')
                 ]);
             }
 
@@ -137,7 +137,7 @@ class UserRGroupsController extends Controller
             $deleted = $this->repository->delete($id);
             if (request()->wantsJson()) {
                 return response()->json([
-                    'message' => __('admin.users-r-group.delete.success'),
+                    'message' => __('admin.users-r-groups.delete.success'),
                     'deleted' => $deleted,
                 ]);
             }
@@ -145,7 +145,7 @@ class UserRGroupsController extends Controller
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,
-                    'message' => __('admin.users-r-group.delete.error')
+                    'message' => __('admin.users-r-groups.delete.error')
                 ]);
             }
         }

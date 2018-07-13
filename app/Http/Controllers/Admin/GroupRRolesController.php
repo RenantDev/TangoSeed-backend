@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\RoleRepository;
+use App\Validators\RoleValidator;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -21,16 +23,25 @@ class GroupRRolesController extends Controller
      * @var GroupRRoleRepository
      */
     protected $repository;
+    protected $repositoryRole;
 
     /**
      * @var GroupRRoleValidator
      */
     protected $validator;
+    protected $roleValidator;
 
-    public function __construct(GroupRRoleRepository $repository, GroupRRoleValidator $validator)
+    public function __construct(
+        GroupRRoleRepository $repository,
+        GroupRRoleValidator $validator,
+        RoleRepository $repositoryRole,
+        RoleValidator $validatorRole
+    )
     {
         $this->repository = $repository;
         $this->validator  = $validator;
+        $this->repositoryRole = $repositoryRole;
+        $this->validatorRole = $validatorRole;
     }
 
 
@@ -41,17 +52,36 @@ class GroupRRolesController extends Controller
      */
     public function index()
     {
-        $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $groupRRoles = $this->repository->all();
+        try{
+            $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+            $this->repositoryRole->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+            $groupRRoles = $this->repository->all(['id', 'group_id', 'role_id', 'created_at', 'updated_at']);
+            $roles = $this->repositoryRole->all(['id', 'title', 'description']);
 
-        if (request()->wantsJson()) {
+            foreach ($groupRRoles AS $key => $value){
+                foreach ($roles AS $keyRole => $valueRole){
+                    if($roles[$keyRole]['id'] == $groupRRoles[$key]['role_id']){
+                        $aux1 = json_decode(json_encode($groupRRoles[$key]), true);
+                        $aux2 = json_decode(json_encode($roles[$keyRole]), true);
+                        $roleList[$key] = array_merge($aux2, $aux1);
+                        continue;
+                    }
+                }
+            }
 
-            return response()->json([
-                'data' => $groupRRoles,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'data' => $roleList,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.group-r-roles.info.error'),
+                ]);
+            }
         }
-
-        return view('groupRRoles.index', compact('groupRRoles'));
     }
 
     /**
@@ -71,106 +101,21 @@ class GroupRRolesController extends Controller
             $groupRRole = $this->repository->create($request->all());
 
             $response = [
-                'message' => 'GroupRRole created.',
+                'message' => __('admin.group-r-roles.create.success'),
                 'data'    => $groupRRole->toArray(),
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
                     'error'   => true,
-                    'message' => $e->getMessageBag()
+                    'message' => __('admin.group-r-roles.create.error')
                 ]);
             }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
-        }
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $groupRRole = $this->repository->find($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'data' => $groupRRole,
-            ]);
-        }
-
-        return view('groupRRoles.show', compact('groupRRole'));
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $groupRRole = $this->repository->find($id);
-
-        return view('groupRRoles.edit', compact('groupRRole'));
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  GroupRRoleUpdateRequest $request
-     * @param  string            $id
-     *
-     * @return Response
-     */
-    public function update(GroupRRoleUpdateRequest $request, $id)
-    {
-
-        try {
-
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
-            $groupRRole = $this->repository->update($request->all(), $id);
-
-            $response = [
-                'message' => 'GroupRRole updated.',
-                'data'    => $groupRRole->toArray(),
-            ];
-
-            if ($request->wantsJson()) {
-
-                return response()->json($response);
-            }
-
-            return redirect()->back()->with('message', $response['message']);
-        } catch (ValidatorException $e) {
-
-            if ($request->wantsJson()) {
-
-                return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
-                ]);
-            }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -184,16 +129,22 @@ class GroupRRolesController extends Controller
      */
     public function destroy($id)
     {
-        $deleted = $this->repository->delete($id);
+        try{
+            $deleted = $this->repository->delete($id);
 
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'GroupRRole deleted.',
-                'deleted' => $deleted,
-            ]);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('admin.group-r-roles.delete.success'),
+                    'deleted' => $deleted,
+                ]);
+            }
+        }catch (\Exception $e){
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => __('admin.group-r-roles.delete.error')
+                ]);
+            }
         }
-
-        return redirect()->back()->with('message', 'GroupRRole deleted.');
     }
 }
