@@ -144,9 +144,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get('/logout', 'LoginController@logout');
 
-    Route::get('/user', function (Request $request) {
-        return response()->json($request->user());
-    });
+    Route::get('/user', 'LoginController@loginName');
 });
 
 Route::post('/login', 'LoginController@loginOn');

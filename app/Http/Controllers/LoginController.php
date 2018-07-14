@@ -95,6 +95,13 @@ class LoginController extends Controller
         }
     }
 
+    // Informações basicas do usuário
+    public function loginName(){
+        return [
+            'name' => Auth::user()->name
+        ];
+    }
+
     // Sai do sistema
     public function logout()
     {
