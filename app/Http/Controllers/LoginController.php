@@ -96,10 +96,24 @@ class LoginController extends Controller
     }
 
     // Informações basicas do usuário
-    public function loginName(){
-        return [
-            'name' => Auth::user()->name
-        ];
+    public function info(){
+        // Busca o avatar do usuário
+        $avatar = DB::table('profiles')
+            ->where('user_id', '=', Auth::user()->id)
+            ->select('avatar')
+            ->get();
+
+        // Converte o objeto em array
+        $avatarArray = json_decode(json_encode($avatar), true);
+
+        // Mescla a array do perfil com a array de login
+        $avatarArray = array_merge($avatarArray[0], array('name' => Auth::user()->name));
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'data' => $avatarArray,
+            ]);
+        }
     }
 
     // Sai do sistema

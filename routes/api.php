@@ -141,10 +141,8 @@ Route::middleware(['auth:api'])->group(function () {
  * Inicio
  */
 Route::middleware('auth:api')->group(function () {
-
     Route::get('/logout', 'LoginController@logout');
-
-    Route::get('/user', 'LoginController@loginName');
+    Route::get('/user', 'LoginController@info');
 });
 
 Route::post('/login', 'LoginController@loginOn');
