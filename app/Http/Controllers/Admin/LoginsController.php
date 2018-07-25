@@ -42,7 +42,7 @@ class LoginsController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $logins = $this->repository->all(['id', 'name', 'email']);
+        $logins = $this->repository->all(['id', 'name', 'email', 'status']);
 
         if (request()->wantsJson()) {
             return response()->json([
