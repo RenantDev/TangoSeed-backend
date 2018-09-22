@@ -98,23 +98,37 @@ class LoginController extends Controller
     // Informações basicas do usuário
     public function info(){
         // Busca o avatar do usuário
-        $avatar = DB::table('profiles')
-            ->where('user_id', '=', Auth::user()->id)
-            ->select('avatar')
-            ->get();
+        $profile = $this->profileValidate();
 
         // Converte o objeto em array
-        $avatarArray = json_decode(json_encode($avatar), true);
+        $profileArray = json_decode(json_encode($profile), true);
 
         // Mescla a array do perfil com a array de login
-        $avatarArray = array_merge($avatarArray[0], array('name' => Auth::user()->name));
+        dd($profileArray);
+        $profileArray = array_merge($profileArray[0], array('name' => Auth::user()->name));
 
         if (request()->wantsJson()) {
             return response()->json([
-                'data' => $avatarArray,
+                'data' => $profileArray,
                 'menu' => $this->listMenu()
             ]);
         }
+    }
+
+    // Valida informações do perfil
+    private function profileValidate(){
+        $result = DB::table('profiles')
+        ->where('user_id', '=', Auth::user()->id)
+        ->select('avatar')
+        ->get();
+
+        if(!isset($result[0])){
+            return [
+                ['avatar' => 'default.png2']
+            ];
+        }
+
+        return $result;
     }
 
     // lista menu do usuario
