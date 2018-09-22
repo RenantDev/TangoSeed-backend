@@ -124,7 +124,7 @@ class LoginController extends Controller
 
         if(!isset($result[0])){
             return [
-                ['avatar' => 'default.png2']
+                ['avatar' => 'default.png']
             ];
         }
 
