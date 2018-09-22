@@ -112,8 +112,56 @@ class LoginController extends Controller
         if (request()->wantsJson()) {
             return response()->json([
                 'data' => $avatarArray,
+                'menu' => $this->listMenu()
             ]);
         }
+    }
+
+    // lista menu do usuario
+    public function listMenu(){
+        
+        $result = DB::table('users')->where('users.id', '=', Auth::user()->id)
+        ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
+        ->join('groups', 'groups.id', '=', 'user_r_groups.group_id')
+        ->where('groups.status', '=', 1)
+        ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
+        ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
+        ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
+        ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
+        ->select('roles.*')
+        ->get();
+
+        // $result = [
+            
+        //         [
+        //             'title' => 'Teste de Menu',
+        //             'tag' => 'teste-de-menu',
+        //             'children' => null
+        //         ],
+        //         [
+        //             'title' => 'Menu com filho',
+        //             'tag' => 'menu-com-filho',
+        //             'children' => [
+        //                 [
+        //                     'title' => 'Teste de Menu 1',
+        //                     'tag' => 'teste-de-menu',
+        //                     'children' => null
+        //                 ],[
+        //                     'title' => 'Teste de Menu 2',
+        //                     'tag' => 'teste-de-menu',
+        //                     'children' => null
+        //                 ],[
+        //                     'title' => 'Teste de Menu 3',
+        //                     'tag' => 'teste-de-menu',
+        //                     'children' => null
+        //                 ],
+        //             ]
+        //         ]
+            
+        // ];
+
+
+        return json_decode(json_encode($result), true);;
     }
 
     // Sai do sistema

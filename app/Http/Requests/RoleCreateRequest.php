@@ -24,7 +24,9 @@ class RoleCreateRequest extends FormRequest
     public function rules()
     {
         return [
+            'category_id' => '',
             'title' => 'required | min: 3 | max: 60 | unique:roles',
+            'slug' => '',
             'description' => ''
         ];
     }

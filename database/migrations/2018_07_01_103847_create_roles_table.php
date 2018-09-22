@@ -15,16 +15,20 @@ class CreateRolesTable extends Migration
 	public function up()
 	{
 		Schema::create('roles', function(Blueprint $table) {
-            $table->increments('id');
+			$table->increments('id');
 
-            $table->string('title', 60)->unique();
+			$table->integer('category_id')->unsigned();
+            $table->foreign('category_id')->references('id')->on('role_categories')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->string('title', 60);
+            $table->string('slug', 60)->unique();
             $table->text('description')->nullable();
 
             $table->timestamps();
 		});
 
-
-        Role::create(['title' => 'Developer', 'description' => 'Função para Desenvolvedor']);
+		
+        Role::create(['category_id' => 1,'title' => 'Resumo Dev', 'slug' => 'resumo-dev', 'description' => 'Função para Desenvolvedor']);
 
 	}
 

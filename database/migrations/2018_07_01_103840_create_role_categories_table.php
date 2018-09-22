@@ -1,0 +1,41 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use App\Entities\RoleCategory;
+
+class CreateRoleCategoriesTable extends Migration
+{
+
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up()
+	{
+		Schema::create('role_categories', function(Blueprint $table) {
+			$table->increments('id');
+
+			$table->string('title', 60)->unique();
+            $table->text('description')->nullable();
+
+            $table->timestamps();
+		});
+
+		RoleCategory::create(['title' => 'category not defined', 'description' => 'Sem descrição']);
+		RoleCategory::create(['title' => 'Admin', 'description' => 'Funções administrativas']);
+
+	}
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down()
+	{
+		Schema::drop('role_categories');
+	}
+
+}
