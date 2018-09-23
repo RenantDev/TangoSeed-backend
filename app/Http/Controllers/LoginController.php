@@ -104,7 +104,6 @@ class LoginController extends Controller
         $profileArray = json_decode(json_encode($profile), true);
 
         // Mescla a array do perfil com a array de login
-        dd($profileArray);
         $profileArray = array_merge($profileArray[0], array('name' => Auth::user()->name));
 
         if (request()->wantsJson()) {
@@ -133,49 +132,61 @@ class LoginController extends Controller
 
     // lista menu do usuario
     public function listMenu(){
+
+        // Busca todas as categorias de menu
+        $category = DB::table('role_categories')
+        ->select('*')
+        ->get();
         
-        $result = DB::table('users')->where('users.id', '=', Auth::user()->id)
+        // Lista todos os itens que o usuario possui acesso
+        $children = DB::table('users')->where('users.id', '=', Auth::user()->id)
         ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
         ->join('groups', 'groups.id', '=', 'user_r_groups.group_id')
         ->where('groups.status', '=', 1)
         ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
         ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
         ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
-        ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
-        ->select('roles.*')
+        ->select(['roles.category_id', 'roles.title', 'roles.slug'])
+        // ->select('*')
         ->get();
 
-        // $result = [
-            
-        //         [
-        //             'title' => 'Teste de Menu',
-        //             'tag' => 'teste-de-menu',
-        //             'children' => null
-        //         ],
-        //         [
-        //             'title' => 'Menu com filho',
-        //             'tag' => 'menu-com-filho',
-        //             'children' => [
-        //                 [
-        //                     'title' => 'Teste de Menu 1',
-        //                     'tag' => 'teste-de-menu',
-        //                     'children' => null
-        //                 ],[
-        //                     'title' => 'Teste de Menu 2',
-        //                     'tag' => 'teste-de-menu',
-        //                     'children' => null
-        //                 ],[
-        //                     'title' => 'Teste de Menu 3',
-        //                     'tag' => 'teste-de-menu',
-        //                     'children' => null
-        //                 ],
-        //             ]
-        //         ]
-            
-        // ];
+        // Define o menu do dashboard
+        $menu = (array) [
+            [
+                'title' => 'Dashboard',
+                'slug' => 'dashboard',
+                'children' => null
+            ]
+        ];
 
+        // Mescla as categorias e seus respectivos itens
+        foreach ($category as $keyCategory => $valueCategory){
+            foreach ($children as $keyChildren => $valueChildren){
+                // Verifica se é um item ou uma categoria e mescla
+                if($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id == 1 ){
+                    $menuMain = (array) [
+                        'title' => $valueChildren->title,
+                        'slug' => $valueChildren->slug,
+                        'children' => null
+                    ];
+                    array_push($menu, $menuMain);
+                } elseif($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id != 1){
+                    $menuMain = (array) [
+                        'title' => $valueCategory->title,
+                        'slug' => null,
+                        'children' => (array) [
+                            'title' => $valueChildren->title,
+                            'slug' => $valueChildren->slug
+                        ]
+                    ];
+                    array_push($menu, $menuMain);
+                }
+                    
+            }
+        }
 
-        return json_decode(json_encode($result), true);;
+        // Retorna o menu
+        return json_decode(json_encode($menu), true);
     }
 
     // Sai do sistema
