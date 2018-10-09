@@ -17,9 +17,13 @@ class CreateRoleCategoriesTable extends Migration
 		Schema::create('role_categories', function(Blueprint $table) {
 			$table->increments('id');
 
-			$table->string('title', 60)->unique();
-            $table->text('description')->nullable();
+            $table->integer('ordination')->default(0);
 
+			$table->string('title', 60)->unique();
+			$table->text('description')->nullable();
+			
+            $table->boolean('status')->default(true);
+            
             $table->timestamps();
 		});
 

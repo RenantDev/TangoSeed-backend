@@ -17,12 +17,16 @@ class CreateRolesTable extends Migration
 		Schema::create('roles', function(Blueprint $table) {
 			$table->increments('id');
 
+            $table->integer('ordination')->default(0);
+
 			$table->integer('category_id')->unsigned();
             $table->foreign('category_id')->references('id')->on('role_categories')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('title', 60);
             $table->string('slug', 60)->unique();
-            $table->text('description')->nullable();
+			$table->text('description')->nullable();
+			
+            $table->boolean('status')->default(true);
 
             $table->timestamps();
 		});
