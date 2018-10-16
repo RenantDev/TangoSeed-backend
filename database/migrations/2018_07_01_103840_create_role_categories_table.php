@@ -20,6 +20,7 @@ class CreateRoleCategoriesTable extends Migration
             $table->integer('ordination')->default(0);
 
 			$table->string('title', 60)->unique();
+			$table->string('slug', 60)->unique();
 			$table->text('description')->nullable();
 			
             $table->boolean('status')->default(true);
@@ -27,8 +28,8 @@ class CreateRoleCategoriesTable extends Migration
             $table->timestamps();
 		});
 
-		RoleCategory::create(['title' => 'category not defined', 'description' => 'Sem descrição']);
-		RoleCategory::create(['title' => 'Admin', 'description' => 'Funções administrativas']);
+		RoleCategory::create(['title' => 'category not defined', 'slug' => '*', 'description' => 'Sem descrição']);
+		RoleCategory::create(['title' => 'Administrador', 'slug' => 'admin', 'description' => 'Funções administrativas']);
 
 	}
 

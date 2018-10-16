@@ -32,8 +32,13 @@ class CreateRolesTable extends Migration
 		});
 
 		
-        Role::create(['category_id' => 1,'title' => 'Resumo Dev', 'slug' => 'resumo-dev', 'description' => 'Função para Desenvolvedor']);
-
+		Role::create(['category_id' => 1,'title' => 'Resumo Dev', 'slug' => 'resumo-dev', 'description' => 'Função para Desenvolvedor']);
+		
+        Role::create(['category_id' => 2,'title' => 'Usuários', 'slug' => 'users', 'description' => 'Gerenciador de usuários do sistema']);
+        Role::create(['category_id' => 2,'title' => 'Grupos', 'slug' => 'groups', 'description' => 'Gerenciador de grupos do sistema']);
+        Role::create(['category_id' => 2,'title' => 'Funções', 'slug' => 'roles', 'description' => 'Gerenciador de funções do sistema']);
+        Role::create(['category_id' => 2,'title' => 'Extenções', 'slug' => 'scopes', 'description' => 'Gerenciador de extenções do sistema']);
+		
 	}
 
 	/**

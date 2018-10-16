@@ -42,12 +42,10 @@ class RolesController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $roles = $this->repository->all();
+        $roles = $this->repository->paginate();
 
         if (request()->wantsJson()) {
-            return response()->json([
-                'data' => $roles,
-            ]);
+            return response()->json($roles);
         }
     }
 

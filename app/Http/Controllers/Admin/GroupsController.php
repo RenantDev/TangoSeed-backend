@@ -43,12 +43,10 @@ class GroupsController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $groups = $this->repository->all();
+        $groups = $this->repository->paginate();
 
         if (request()->wantsJson()) {
-            return response()->json([
-                'data' => $groups,
-            ]);
+            return response()->json($groups);
         }
     }
 

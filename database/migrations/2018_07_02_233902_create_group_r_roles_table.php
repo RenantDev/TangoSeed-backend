@@ -29,7 +29,14 @@ class CreateGroupRRolesTable extends Migration
             $table->timestamps();
 		});
 
-        GroupRRole::create(['group_id' => 1, 'role_id' => 1]);
+		// Developer
+		GroupRRole::create(['group_id' => 1, 'role_id' => 1]);
+		
+		// Administrador
+		GroupRRole::create(['group_id' => 2, 'role_id' => 2]);
+		GroupRRole::create(['group_id' => 2, 'role_id' => 3]);
+		GroupRRole::create(['group_id' => 2, 'role_id' => 4]);
+		GroupRRole::create(['group_id' => 2, 'role_id' => 5]);
 	}
 
 	/**

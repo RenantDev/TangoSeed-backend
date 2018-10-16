@@ -12,6 +12,7 @@ class RoleCategory extends Model implements Transformable
 
     protected $fillable = [
         'title',
+        'slug',
         'description'
     ];
 

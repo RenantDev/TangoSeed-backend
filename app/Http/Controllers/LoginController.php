@@ -69,6 +69,7 @@ class LoginController extends Controller
             ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
             ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
             ->select('scopes.tag')
+            ->groupBy('scopes.tag')
             ->get();
 
         // Converte o objeto em array
@@ -78,7 +79,12 @@ class LoginController extends Controller
         $result = '';
         $i = 0;
         foreach($users as $user){
-            $result = $result . $user['tag'] . ' ';
+            if($user['tag'] == '*'){
+                $result = '*';
+                continue;
+            } else{
+                $result = $result . $user['tag'] . ' ';
+            }
             $i++;
         }
 
@@ -146,8 +152,10 @@ class LoginController extends Controller
         ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
         ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
         ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
-        ->select(['roles.category_id', 'roles.title', 'roles.slug'])
-        // ->select('*')
+        ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
+        ->select(['roles.ordination','roles.category_id', 'roles.title', 'roles.slug'])
+        ->groupBy('roles.title')
+        ->orderBy('roles.ordination')
         ->get();
 
         // Define o menu do dashboard
@@ -161,27 +169,35 @@ class LoginController extends Controller
 
         // Mescla as categorias e seus respectivos itens
         foreach ($category as $keyCategory => $valueCategory){
-            foreach ($children as $keyChildren => $valueChildren){
-                // Verifica se é um item ou uma categoria e mescla
-                if($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id == 1 ){
-                    $menuMain = (array) [
-                        'title' => $valueChildren->title,
-                        'slug' => $valueChildren->slug,
-                        'children' => null
-                    ];
-                    array_push($menu, $menuMain);
-                } elseif($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id != 1){
-                    $menuMain = (array) [
-                        'title' => $valueCategory->title,
-                        'slug' => null,
-                        'children' => (array) [
+            if($valueCategory->id != 1){
+
+                $menuMain = (array) [ 
+                    'title' => $valueCategory->title,
+                    'slug' => $valueCategory->slug,
+                    'children' => null
+                ];
+                $menuChildren = array();
+        
+                foreach ($children as $keyChildren => $valueChildren){
+                    // Verifica se é um item ou uma categoria e mescla
+                    if($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id == 1 ){
+                        $menuMain = (array) [
                             'title' => $valueChildren->title,
-                            'slug' => $valueChildren->slug
-                        ]
-                    ];
-                    array_push($menu, $menuMain);
+                            'slug' => $valueChildren->slug,
+                            'children' => null
+                        ];
+                    } elseif($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id != 1){
+                        $menuMainChildren = (array) [ 
+                                'title' => $valueChildren->title,
+                                'slug' => $valueChildren->slug
+                            ];
+                        array_push($menuChildren, $menuMainChildren);
+                    }
+                        
                 }
-                    
+
+                $menuMain['children'] = $menuChildren;
+                array_push($menu, $menuMain);
             }
         }
 

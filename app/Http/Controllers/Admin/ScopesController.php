@@ -47,12 +47,10 @@ class ScopesController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $scopes = $this->repository->all();
+        $scopes = $this->repository->paginate();
 
         if (request()->wantsJson()) {
-            return response()->json([
-                'data' => $scopes,
-            ]);
+            return response()->json($scopes);
         }
 
     }
