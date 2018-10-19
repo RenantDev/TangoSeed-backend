@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
-use GuzzleHttp;
 
 class LoginController extends Controller
 {
@@ -21,18 +20,19 @@ class LoginController extends Controller
     }
 
     // Inicia uma nova sessão no sistema e retorna os tokens de acesso
-    public function loginOn(Request $request){
+    public function loginOn(Request $request)
+    {
 
         // Lib de client HTTP
         $http = new GuzzleHttp\Client;
 
         // Validação de usuário
-        try{
+        try {
             // Verifica o token do frontend
             $token = DB::table('oauth_clients')->where('id', 1)->first();
 
             // Se o token do frontend estiver correto valida o usuário e retorna o token de acesso
-            if($request->client_secret == $token->secret){
+            if ($request->client_secret == $token->secret) {
                 // validação de dados de acesso
                 $response = $http->post(env('APP_URL') . '/oauth/token', [
                     'form_params' => [
@@ -44,12 +44,12 @@ class LoginController extends Controller
                         'scope' => $this->listScopes($request->username),
                     ],
                 ]);
-            } else{
+            } else {
                 // Dados de acesso invalidos
                 $response = response(['error' => true, 'message' => __('auth.failed')], 404);
             }
 
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             // Retorna um erro caso ocorra algum problema nas validações do try
             $response = response(['error' => true, 'message' => __('auth.failed')], 404);
         }
@@ -58,7 +58,8 @@ class LoginController extends Controller
     }
 
     // Busca os scopes do usuário
-    private function listScopes($email){
+    private function listScopes($email)
+    {
         // Busca os scopes do usuário no sistema e retorna um objeto
         $users = DB::table('users')->where('email', '=', $email)
             ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
@@ -78,11 +79,11 @@ class LoginController extends Controller
         // Transforma a array em uma string
         $result = '';
         $i = 0;
-        foreach($users as $user){
-            if($user['tag'] == '*'){
+        foreach ($users as $user) {
+            if ($user['tag'] == '*') {
                 $result = '*';
                 continue;
-            } else{
+            } else {
                 $result = $result . $user['tag'] . ' ';
             }
             $i++;
@@ -102,7 +103,8 @@ class LoginController extends Controller
     }
 
     // Informações basicas do usuário
-    public function info(){
+    public function info()
+    {
         // Busca o avatar do usuário
         $profile = $this->profileValidate();
 
@@ -115,21 +117,22 @@ class LoginController extends Controller
         if (request()->wantsJson()) {
             return response()->json([
                 'data' => $profileArray,
-                'menu' => $this->listMenu()
+                'menu' => $this->listMenu(),
             ]);
         }
     }
 
     // Valida informações do perfil
-    private function profileValidate(){
+    private function profileValidate()
+    {
         $result = DB::table('profiles')
-        ->where('user_id', '=', Auth::user()->id)
-        ->select('avatar')
-        ->get();
+            ->where('user_id', '=', Auth::user()->id)
+            ->select('avatar')
+            ->get();
 
-        if(!isset($result[0])){
+        if (!isset($result[0])) {
             return [
-                ['avatar' => 'default.png']
+                ['avatar' => 'default.png'],
             ];
         }
 
@@ -137,68 +140,94 @@ class LoginController extends Controller
     }
 
     // lista menu do usuario
-    public function listMenu(){
-
-        // Busca todas as categorias de menu
-        $category = DB::table('role_categories')
-        ->select('*')
-        ->get();
+    public function listMenu()
+    {
         
-        // Lista todos os itens que o usuario possui acesso
-        $children = DB::table('users')->where('users.id', '=', Auth::user()->id)
-        ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
-        ->join('groups', 'groups.id', '=', 'user_r_groups.group_id')
-        ->where('groups.status', '=', 1)
-        ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
-        ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
-        ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
-        ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
-        ->select(['roles.ordination','roles.category_id', 'roles.title', 'roles.slug'])
-        ->groupBy('roles.title')
-        ->orderBy('roles.ordination')
-        ->get();
+        // Verifica a existencia de um login Developer
+        $developerGroup = DB::table('users')->where('users.id', '=', Auth::user()->id)
+            ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
+            ->join('groups', 'groups.id', '=', 'user_r_groups.group_id')
+            ->where('groups.id', '=', 1)->exists();
+
+        if ($developerGroup) {
+            // Lista todas as categorias
+            $mainRoles = DB::table('roles')
+                ->where('roles.category_id', '=', 1)
+                ->where('roles.id', '!=', 1)
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->groupBy('roles.title')
+                ->orderBy('roles.ordination')
+                ->get();
+
+            // Lista todos os itens
+            $roles = DB::table('roles')
+                ->where('roles.category_id', '!=', 1)
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->groupBy('roles.title')
+                ->orderBy('roles.ordination')
+                ->get();
+        } else {
+            // Lista todas as categorias
+            $mainRoles = DB::table('users')->where('users.id', '=', Auth::user()->id)
+                ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
+                ->join('groups', 'groups.id', '=', 'user_r_groups.group_id')
+                ->where('groups.status', '=', 1)
+                ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
+                ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
+                ->where('roles.category_id', '=', 1)
+                ->where('roles.id', '!=', 1)
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->groupBy('roles.title')
+                ->orderBy('roles.ordination')
+                ->get();
+
+            // Lista todos os itens
+            $roles = DB::table('users')->where('users.id', '=', Auth::user()->id)
+                ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
+                ->join('groups', 'groups.id', '=', 'user_r_groups.group_id')
+                ->where('groups.status', '=', 1)
+                ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
+                ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
+                ->where('roles.category_id', '!=', 1)
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->groupBy('roles.title')
+                ->orderBy('roles.ordination')
+                ->get();
+        }
+
 
         // Define o menu do dashboard
         $menu = (array) [
             [
                 'title' => 'Dashboard',
                 'slug' => 'dashboard',
-                'children' => null
-            ]
+                'children' => array(),
+            ],
         ];
 
-        // Mescla as categorias e seus respectivos itens
-        foreach ($category as $keyCategory => $valueCategory){
-            if($valueCategory->id != 1){
+        $menuMain = array();
+        $menuRole = array();
 
-                $menuMain = (array) [ 
-                    'title' => $valueCategory->title,
-                    'slug' => $valueCategory->slug,
-                    'children' => null
-                ];
-                $menuChildren = array();
-        
-                foreach ($children as $keyChildren => $valueChildren){
-                    // Verifica se é um item ou uma categoria e mescla
-                    if($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id == 1 ){
-                        $menuMain = (array) [
-                            'title' => $valueChildren->title,
-                            'slug' => $valueChildren->slug,
-                            'children' => null
-                        ];
-                    } elseif($valueCategory->id == $valueChildren->category_id and $valueChildren->category_id != 1){
-                        $menuMainChildren = (array) [ 
-                                'title' => $valueChildren->title,
-                                'slug' => $valueChildren->slug
-                            ];
-                        array_push($menuChildren, $menuMainChildren);
-                    }
-                        
+        foreach ($mainRoles as $mainKey => $mainRole) {
+            foreach ($roles as $key => $role) {
+                if($mainRole->id == $role->category_id){
+                    $newRole = (array) [
+                        'title' => $role->title,
+                        'slug' => $role->slug,
+                    ];
+    
+                    // adiciona um novo role a categoria
+                    array_push($menuRole, $newRole);
                 }
-
-                $menuMain['children'] = $menuChildren;
-                array_push($menu, $menuMain);
             }
+
+            $menuMain = (array) [
+                'title' => $mainRole->title,
+                'slug' => $mainRole->slug,
+                'children' => $menuRole,
+            ];
+            // Adiciona um novo role principal ao menu
+            array_push($menu, $menuMain);
         }
 
         // Retorna o menu

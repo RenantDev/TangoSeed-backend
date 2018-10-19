@@ -20,7 +20,7 @@ class CreateRolesTable extends Migration
             $table->integer('ordination')->default(0);
 
 			$table->integer('category_id')->unsigned();
-            $table->foreign('category_id')->references('id')->on('role_categories')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('category_id')->references('id')->on('roles')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('title', 60);
             $table->string('slug', 60)->unique();
@@ -32,12 +32,15 @@ class CreateRolesTable extends Migration
 		});
 
 		
+		Role::create(['category_id' => 1,'title' => 'none', 'slug' => '#', 'description' => 'none']);
 		Role::create(['category_id' => 1,'title' => 'Resumo Dev', 'slug' => 'resumo-dev', 'description' => 'Função para Desenvolvedor']);
+
+		Role::create(['category_id' => 1,'title' => 'Administrador', 'slug' => 'admin', 'description' => 'Administração do sistema.']);
 		
-        Role::create(['category_id' => 2,'title' => 'Usuários', 'slug' => 'users', 'description' => 'Gerenciador de usuários do sistema']);
-        Role::create(['category_id' => 2,'title' => 'Grupos', 'slug' => 'groups', 'description' => 'Gerenciador de grupos do sistema']);
-        Role::create(['category_id' => 2,'title' => 'Funções', 'slug' => 'roles', 'description' => 'Gerenciador de funções do sistema']);
-        Role::create(['category_id' => 2,'title' => 'Extenções', 'slug' => 'scopes', 'description' => 'Gerenciador de extenções do sistema']);
+        Role::create(['category_id' => 3,'title' => 'Usuários', 'slug' => 'users', 'description' => 'Gerenciador de usuários do sistema']);
+        Role::create(['category_id' => 3,'title' => 'Grupos', 'slug' => 'groups', 'description' => 'Gerenciador de grupos do sistema']);
+        Role::create(['category_id' => 3,'title' => 'Funções', 'slug' => 'roles', 'description' => 'Gerenciador de funções do sistema']);
+        Role::create(['category_id' => 3,'title' => 'Extenções', 'slug' => 'scopes', 'description' => 'Gerenciador de extenções do sistema']);
 		
 	}
 
