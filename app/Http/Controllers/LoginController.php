@@ -67,6 +67,7 @@ class LoginController extends Controller
             ->where('groups.status', '=', 1)
             ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
             ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
+            ->where('roles.status', '=', 1)
             ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
             ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
             ->select('scopes.tag')
@@ -176,6 +177,7 @@ class LoginController extends Controller
                 ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
                 ->where('roles.category_id', '=', 1)
                 ->where('roles.id', '!=', 1)
+                ->where('roles.status', '=', 1)
                 ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
                 ->groupBy('roles.title')
                 ->orderBy('roles.ordination')
@@ -189,6 +191,7 @@ class LoginController extends Controller
                 ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
                 ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
                 ->where('roles.category_id', '!=', 1)
+                ->where('roles.status', '=', 1)
                 ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
                 ->groupBy('roles.title')
                 ->orderBy('roles.ordination')
@@ -205,10 +208,11 @@ class LoginController extends Controller
             ],
         ];
 
+        // Lista itens do menu
         $menuMain = array();
-        $menuRole = array();
-
         foreach ($mainRoles as $mainKey => $mainRole) {
+            // Define sub menu
+            $menuRole = array();
             foreach ($roles as $key => $role) {
                 if($mainRole->id == $role->category_id){
                     $newRole = (array) [
@@ -221,11 +225,13 @@ class LoginController extends Controller
                 }
             }
 
+            // Define menu ou categoria
             $menuMain = (array) [
                 'title' => $mainRole->title,
                 'slug' => $mainRole->slug,
                 'children' => $menuRole,
             ];
+
             // Adiciona um novo role principal ao menu
             array_push($menu, $menuMain);
         }
