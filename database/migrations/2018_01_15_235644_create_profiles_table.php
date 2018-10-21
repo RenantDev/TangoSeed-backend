@@ -22,10 +22,9 @@ class CreateProfilesTable extends Migration
             $table->string('avatar', 120)->default('default.png');
             $table->string('first_name', 60);
             $table->string('last_name', 60);
-            $table->string('ddd', 3);
-            $table->string('cell_phone', 11);
-            $table->tinyInteger('gender');
-            $table->tinyInteger('status');
+            $table->string('cell_phone', 20)->nullable();
+            $table->tinyInteger('gender')->nullable();
+            $table->tinyInteger('status')->default(1);
 
             $table->timestamps();
 		});

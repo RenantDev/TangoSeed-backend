@@ -30,7 +30,7 @@ class CreateGroupRRolesTable extends Migration
 		});
 
 		// Developer
-		GroupRRole::create(['group_id' => 1, 'role_id' => 1]);
+		GroupRRole::create(['group_id' => 1, 'role_id' => 2]);
 		
 		// Administrador
 		GroupRRole::create(['group_id' => 2, 'role_id' => 3]);

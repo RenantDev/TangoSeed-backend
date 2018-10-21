@@ -68,6 +68,7 @@ class LoginController extends Controller
             ->join('group_r_roles', 'group_r_roles.group_id', '=', 'groups.id')
             ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
             ->where('roles.status', '=', 1)
+            ->where('roles.id', '!=', 1)
             ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
             ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
             ->select('scopes.tag')
@@ -217,7 +218,7 @@ class LoginController extends Controller
                 if($mainRole->id == $role->category_id){
                     $newRole = (array) [
                         'title' => $role->title,
-                        'slug' => $role->slug,
+                        'slug' => $mainRole->slug.'/'.$role->slug,
                     ];
     
                     // adiciona um novo role a categoria

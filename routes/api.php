@@ -42,13 +42,13 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/admin/user-r-groups', 'Admin\UserRGroupsController@store')->middleware(['scope:user-r-groups-store']);
 
     // Edição de função do grupo
-    Route::post('/admin/user-r-groups/{id}', 'Admin\UserRGroupsController@update')->middleware(['scope:user-r-groups-update']);
+    // Route::post('/admin/user-r-groups/{id}', 'Admin\UserRGroupsController@update')->middleware(['scope:user-r-groups-update']);
 
     // Exclusão de função do grupo
     Route::delete('/admin/user-r-groups/{id}', 'Admin\UserRGroupsController@destroy')->middleware(['scope:user-r-groups-destroy']);
 
     // Informações da função do grupo
-    Route::get('/admin/user-r-groups/{id}', 'Admin\UserRGroupsController@show')->middleware(['scope:user-r-groups-show']);
+    // Route::get('/admin/user-r-groups/{id}', 'Admin\UserRGroupsController@show')->middleware(['scope:user-r-groups-show']);
 
     // -------- GRUPOS --------
     // Lista de grupos
@@ -74,13 +74,13 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/admin/group-r-roles', 'Admin\GroupRRolesController@store')->middleware(['scope:group-r-roles-store']);
 
     // Edição de função do grupo
-    Route::post('/admin/group-r-roles/{id}', 'Admin\GroupRRolesController@update')->middleware(['scope:group-r-roles-update']);
+    // Route::post('/admin/group-r-roles/{id}', 'Admin\GroupRRolesController@update')->middleware(['scope:group-r-roles-update']);
 
     // Exclusão de função do grupo
     Route::delete('/admin/group-r-roles/{id}', 'Admin\GroupRRolesController@destroy')->middleware(['scope:group-r-roles-destroy']);
 
     // Informações da função do grupo
-    Route::get('/admin/group-r-roles/{id}', 'Admin\GroupRRolesController@show')->middleware(['scope:group-r-roles-show']);
+    // Route::get('/admin/group-r-roles/{id}', 'Admin\GroupRRolesController@show')->middleware(['scope:group-r-roles-show']);
 
     // -------- FUNÇÕES --------
     // Lista de funções
@@ -106,13 +106,13 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/admin/role-r-scopes', 'Admin\RoleRScopesController@store')->middleware(['scope:role-r-scopes-store']);
 
     // Edição de extenção da função
-    Route::post('/admin/role-r-scopes/{id}', 'Admin\RoleRScopesController@update')->middleware(['scope:role-r-scopes-update']);
+    // Route::post('/admin/role-r-scopes/{id}', 'Admin\RoleRScopesController@update')->middleware(['scope:role-r-scopes-update']);
 
     // Exclusão de extenção da função
     Route::delete('/admin/role-r-scopes/{id}', 'Admin\RoleRScopesController@destroy')->middleware(['scope:role-r-scopes-destroy']);
 
     // Informações da extenção da função
-    Route::get('/admin/role-r-scopes/{id}', 'Admin\RoleRScopesController@show')->middleware(['scope:role-r-scopes-show']);
+    // Route::get('/admin/role-r-scopes/{id}', 'Admin\RoleRScopesController@show')->middleware(['scope:role-r-scopes-show']);
 
     // -------- EXTENÇÕES --------
     // Lista de extenções
@@ -143,6 +143,17 @@ Route::middleware(['auth:api'])->group(function () {
 Route::middleware('auth:api')->group(function () {
     Route::get('/logout', 'LoginController@logout');
     Route::get('/user', 'LoginController@info');
+
+    // -------- PROFILE --------
+    // Lista de perfil
+    Route::get('/profile', 'ProfilesController@index');
+
+    // Nova perfil
+    Route::post('/profile', 'ProfilesController@store');
+
+    // Edição de perfil
+    Route::post('/profile/update', 'ProfilesController@update');
+
 });
 
 Route::post('/login', 'LoginController@loginOn');

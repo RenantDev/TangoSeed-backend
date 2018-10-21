@@ -11,10 +11,10 @@ class Profile extends Model implements Transformable
     use TransformableTrait;
 
     protected $fillable = [
+        'user_id',
         'avatar',
         'first_name',
         'last_name',
-        'ddd',
         'cell_phone',
         'gender',
         'status'

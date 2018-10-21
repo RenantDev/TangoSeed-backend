@@ -24,7 +24,12 @@ class ProfileUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'avatar' => '',
+            'first_name' => '',
+            'last_name' => '',
+            'cell_phone' => '',
+            'gender' => '',
+            'status' => '',
         ];
     }
 }

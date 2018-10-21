@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Requests;
 use Prettus\Validator\Contracts\ValidatorInterface;
@@ -41,16 +43,14 @@ class ProfilesController extends Controller
     public function index()
     {
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $profiles = $this->repository->all();
+        $profiles = $this->repository->findWhere(['user_id' => Auth::user()->id]);
 
         if (request()->wantsJson()) {
-
             return response()->json([
                 'data' => $profiles,
             ]);
         }
 
-        return view('profiles.index', compact('profiles'));
     }
 
     /**
@@ -63,11 +63,14 @@ class ProfilesController extends Controller
     public function store(ProfileCreateRequest $request)
     {
 
+        
+        $profile = array_merge($request->all(), ['user_id' => Auth::user()->id]);
+
         try {
 
-            $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
+            $this->validator->with($profile)->passesOrFail(ValidatorInterface::RULE_CREATE);
 
-            $profile = $this->repository->create($request->all());
+            $profile = $this->repository->create($profile);
 
             $response = [
                 'message' => 'Profile created.',
@@ -75,11 +78,9 @@ class ProfilesController extends Controller
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
@@ -87,8 +88,6 @@ class ProfilesController extends Controller
                     'message' => $e->getMessageBag()
                 ]);
             }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
@@ -111,25 +110,7 @@ class ProfilesController extends Controller
             ]);
         }
 
-        return view('profiles.show', compact('profile'));
     }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-
-        $profile = $this->repository->find($id);
-
-        return view('profiles.edit', compact('profile'));
-    }
-
 
     /**
      * Update the specified resource in storage.
@@ -139,14 +120,25 @@ class ProfilesController extends Controller
      *
      * @return Response
      */
-    public function update(ProfileUpdateRequest $request, $id)
+    public function update(ProfileUpdateRequest $request)
     {
 
+        // Busca o ID do pefil no banco de dados e retorna uma array
+        $profileArray = DB::table('profiles')
+        ->where('user_id', '=', Auth::user()->id)
+        ->select(['id'])
+        ->get()
+        ->toArray();
+
+        // Extrai o ID do perfil da array
+        $idProfile = $profileArray[0]->id;
+
+        // Atualiza as informações do perfil
         try {
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            $profile = $this->repository->update($request->all(), $id);
+            $profile = $this->repository->update($request->all(), $idProfile);
 
             $response = [
                 'message' => 'Profile updated.',
@@ -154,45 +146,18 @@ class ProfilesController extends Controller
             ];
 
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('message', $response['message']);
         } catch (ValidatorException $e) {
 
             if ($request->wantsJson()) {
-
                 return response()->json([
                     'error'   => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
-
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
 
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $deleted = $this->repository->delete($id);
-
-        if (request()->wantsJson()) {
-
-            return response()->json([
-                'message' => 'Profile deleted.',
-                'deleted' => $deleted,
-            ]);
-        }
-
-        return redirect()->back()->with('message', 'Profile deleted.');
-    }
 }
