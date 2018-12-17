@@ -3,16 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\LoginCreateRequest;
 use App\Http\Requests\LoginUpdateRequest;
 use App\Repositories\LoginRepository;
 use App\Validators\LoginValidator;
-
+use Illuminate\Http\Request;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 class LoginsController extends Controller
 {
@@ -30,9 +27,8 @@ class LoginsController extends Controller
     public function __construct(LoginRepository $repository, LoginValidator $validator)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
+        $this->validator = $validator;
     }
-
 
     /**
      * Display a listing of the resource.
@@ -41,8 +37,13 @@ class LoginsController extends Controller
      */
     public function index()
     {
+
+        // Define a quantidade de itens na pagina
+        $limit = request('limit', null);
+
+        // Verifica e lista os itens da tabela
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $logins = $this->repository->paginate(null, ['id', 'name', 'email', 'status']);
+        $logins = $this->repository->paginate($limit, ['id', 'name', 'email', 'status']);
 
         if (request()->wantsJson()) {
             return response()->json($logins);
@@ -72,7 +73,7 @@ class LoginsController extends Controller
 
             $response = [
                 'message' => __('admin.users.create.success'),
-                'data'    => $login->toArray(),
+                'data' => $login->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -82,14 +83,13 @@ class LoginsController extends Controller
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
+                    'error' => true,
+                    'message' => $e->getMessageBag(),
                 ]);
             }
 
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -100,7 +100,7 @@ class LoginsController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
             $login = $this->repository->find($id, ['id', 'name', 'email', 'created_at', 'updated_at']);
 
             if (request()->wantsJson()) {
@@ -108,17 +108,16 @@ class LoginsController extends Controller
                     'data' => $login,
                 ]);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,
-                    'message' => __('admin.users.info.error')
+                    'message' => __('admin.users.info.error'),
                 ]);
             }
         }
 
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -135,7 +134,7 @@ class LoginsController extends Controller
 
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            if (isset($request->password)){
+            if (isset($request->password)) {
                 $request->merge(['password' => bcrypt($request->password)]);
             }
 
@@ -143,7 +142,7 @@ class LoginsController extends Controller
 
             $response = [
                 'message' => __('admin.users.update.success'),
-                'data'    => $login->toArray(),
+                'data' => $login->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -154,14 +153,13 @@ class LoginsController extends Controller
 
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
-                    'message' => __('admin.users.update.error')
+                    'error' => true,
+                    'message' => __('admin.users.update.error'),
                 ]);
             }
 
         }
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -173,7 +171,7 @@ class LoginsController extends Controller
     public function destroy($id)
     {
 
-        try{
+        try {
             $deleted = $this->repository->delete($id);
             if (request()->wantsJson()) {
                 return response()->json([
@@ -181,11 +179,11 @@ class LoginsController extends Controller
                     'deleted' => $deleted,
                 ]);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,
-                    'message' => __('admin.users.delete.error')
+                    'message' => __('admin.users.delete.error'),
                 ]);
             }
         }
