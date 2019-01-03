@@ -50,7 +50,7 @@ class GroupsController extends Controller
     }
 
     function list() {
-        $groups = $this->repository->all();
+        $groups = $this->repository->all(['id', 'title']);
 
         if (request()->wantsJson()) {
             return response()->json($groups);
