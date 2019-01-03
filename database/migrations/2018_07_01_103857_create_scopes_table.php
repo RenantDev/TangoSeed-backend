@@ -70,6 +70,8 @@ class CreateScopesTable extends Migration
         Scope::create(['tag' => 'scopes-destroy', 'title' => 'Exclusão de Extenção', 'description' => 'Remove definitivamente uma Extenção do sistema.']);
         Scope::create(['tag' => 'scopes-show', 'title' => 'Informações de Extenção', 'description' => 'Exibe as informações da Extenção.']);
 
+        // Lista de Grupos
+        Scope::create(['tag' => 'users-list-groups', 'title' => 'Lista de Grupos', 'description' => 'Exibe lista de Grupos.']);
 
     }
 

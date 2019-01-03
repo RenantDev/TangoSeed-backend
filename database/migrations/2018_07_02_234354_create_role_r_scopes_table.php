@@ -40,6 +40,7 @@ class CreateRoleRScopesTable extends Migration
         RoleRScope::create(['role_id' => 4, 'scope_id' => 7]);
         RoleRScope::create(['role_id' => 4, 'scope_id' => 8]);
 		RoleRScope::create(['role_id' => 4, 'scope_id' => 9]);
+        RoleRScope::create(['role_id' => 4, 'scope_id' => 31]);
 		
 		// Grupos
         RoleRScope::create(['role_id' => 5, 'scope_id' => 10]);
