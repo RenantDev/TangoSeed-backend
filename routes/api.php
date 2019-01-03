@@ -35,7 +35,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/admin/users/{id}', 'Admin\LoginsController@show')->middleware(['scope:users-show']);
 
     // Lista Grupos
-    Route::get('/admin/groups/list', 'Admin\GroupsController@index')->middleware(['scope:users-list-groups']);
+    Route::get('/admin/groups/list', 'Admin\GroupsController@list')->middleware(['scope:users-list-groups']);
 
     // -------- USUÁRIOS & GRUPOS --------
     // Lista de usuários dos grupos
