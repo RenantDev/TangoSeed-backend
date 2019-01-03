@@ -3,17 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Dotenv\Exception\ValidationException;
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
 use App\Http\Requests\GroupCreateRequest;
 use App\Http\Requests\GroupUpdateRequest;
 use App\Repositories\GroupRepository;
 use App\Validators\GroupValidator;
-
+use Illuminate\Http\Request;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
 
 class GroupsController extends Controller
 {
@@ -31,9 +27,8 @@ class GroupsController extends Controller
     public function __construct(GroupRepository $repository, GroupValidator $validator)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
+        $this->validator = $validator;
     }
-
 
     /**
      * Display a listing of the resource.
@@ -42,8 +37,20 @@ class GroupsController extends Controller
      */
     public function index()
     {
+
+        // Define a quantidade de itens na pagina
+        $limit = request('limit', null);
+
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $groups = $this->repository->paginate();
+        $groups = $this->repository->paginate($limit);
+
+        if (request()->wantsJson()) {
+            return response()->json($groups);
+        }
+    }
+
+    function list() {
+        $groups = $this->repository->all();
 
         if (request()->wantsJson()) {
             return response()->json($groups);
@@ -67,7 +74,7 @@ class GroupsController extends Controller
 
             $response = [
                 'message' => __('admin.groups.create.success'),
-                'data'    => $group->toArray(),
+                'data' => $group->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -76,13 +83,12 @@ class GroupsController extends Controller
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
+                    'error' => true,
+                    'message' => $e->getMessageBag(),
                 ]);
             }
         }
     }
-
 
     /**
      * Display the specified resource.
@@ -93,7 +99,7 @@ class GroupsController extends Controller
      */
     public function show($id)
     {
-        try{
+        try {
             $group = $this->repository->find($id);
 
             if (request()->wantsJson()) {
@@ -101,11 +107,11 @@ class GroupsController extends Controller
                     'data' => $group,
                 ]);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,
-                    'message' => __('admin.groups.info.error')
+                    'message' => __('admin.groups.info.error'),
                 ]);
             }
         }
@@ -130,7 +136,7 @@ class GroupsController extends Controller
 
             $response = [
                 'message' => __('admin.groups.update.success'),
-                'data'    => $group->toArray(),
+                'data' => $group->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -139,14 +145,13 @@ class GroupsController extends Controller
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
-                    'message' => $e->getMessageBag()
+                    'error' => true,
+                    'message' => $e->getMessageBag(),
                 ]);
             }
 
         }
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -157,7 +162,7 @@ class GroupsController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             $deleted = $this->repository->delete($id);
             if (request()->wantsJson()) {
                 return response()->json([
@@ -165,7 +170,7 @@ class GroupsController extends Controller
                     'message' => __('admin.groups.delete.success'),
                 ]);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,
