@@ -218,7 +218,8 @@ class LoginController extends Controller
                 if($mainRole->id == $role->category_id){
                     $newRole = (array) [
                         'title' => $role->title,
-                        'slug' => $mainRole->slug.'/'.$role->slug,
+                        'slug' => $role->slug,
+                        //'slug' => $mainRole->slug.'/'.$role->slug,
                     ];
     
                     // adiciona um novo role a categoria
