@@ -231,7 +231,7 @@ class LoginController extends Controller
 
             // Define menu ou categoria
             $menuMain = (array) [
-                'icon' => $menuMain->icon,
+                'icon' => $mainRole->icon,
                 'title' => $mainRole->title,
                 'slug' => $mainRole->slug,
                 'children' => $menuRole,
