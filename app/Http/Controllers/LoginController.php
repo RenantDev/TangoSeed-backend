@@ -156,7 +156,7 @@ class LoginController extends Controller
             $mainRoles = DB::table('roles')
                 ->where('roles.category_id', '=', 1)
                 ->where('roles.id', '!=', 1)
-                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.icon', 'roles.title', 'roles.slug'])
                 ->groupBy('roles.title')
                 ->orderBy('roles.ordination')
                 ->get();
@@ -164,7 +164,7 @@ class LoginController extends Controller
             // Lista todos os itens
             $roles = DB::table('roles')
                 ->where('roles.category_id', '!=', 1)
-                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.icon', 'roles.title', 'roles.slug'])
                 ->groupBy('roles.title')
                 ->orderBy('roles.ordination')
                 ->get();
@@ -179,7 +179,7 @@ class LoginController extends Controller
                 ->where('roles.category_id', '=', 1)
                 ->where('roles.id', '!=', 1)
                 ->where('roles.status', '=', 1)
-                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.icon', 'roles.title', 'roles.slug'])
                 ->groupBy('roles.title')
                 ->orderBy('roles.ordination')
                 ->get();
@@ -193,7 +193,7 @@ class LoginController extends Controller
                 ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
                 ->where('roles.category_id', '!=', 1)
                 ->where('roles.status', '=', 1)
-                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.title', 'roles.slug'])
+                ->select(['roles.id', 'roles.ordination', 'roles.category_id', 'roles.icon', 'roles.title', 'roles.slug'])
                 ->groupBy('roles.title')
                 ->orderBy('roles.ordination')
                 ->get();
@@ -217,6 +217,7 @@ class LoginController extends Controller
             foreach ($roles as $key => $role) {
                 if($mainRole->id == $role->category_id){
                     $newRole = (array) [
+                        'icon' => $role->icon,
                         'title' => $role->title,
                         'slug' => $role->slug,
                         //'slug' => $mainRole->slug.'/'.$role->slug,

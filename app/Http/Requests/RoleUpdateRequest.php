@@ -25,6 +25,7 @@ class RoleUpdateRequest extends FormRequest
     {
         return [
             'category_id' => '',
+            'icon' => 'max: 60',
             'title' => 'min: 3 | max: 60 | unique:roles',
             'slug' => '',
             'description' => ''

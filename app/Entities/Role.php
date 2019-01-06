@@ -12,6 +12,7 @@ class Role extends Model implements Transformable
 
     protected $fillable = [
         'category_id',
+        'icon',
         'title',
         'slug',
         'description'

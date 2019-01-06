@@ -12,12 +12,14 @@ class RoleValidator extends LaravelValidator
         ValidatorInterface::RULE_CREATE => [
 
             'category_id' => '',
+            'icon' => 'max: 60',
             'title' => 'required | min: 3 | max: 60',
             'slug' => '',
             'description' => ''
         ],
         ValidatorInterface::RULE_UPDATE => [
             'category_id' => '',
+            'icon' => 'max: 60',
             'title' => 'min: 3 | max: 60',
             'slug' => '',
             'description' => ''
