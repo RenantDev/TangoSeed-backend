@@ -203,6 +203,7 @@ class LoginController extends Controller
         // Define o menu do dashboard
         $menu = (array) [
             [
+                'icon' => 'fa-home',
                 'title' => 'Dashboard',
                 'slug' => 'dashboard',
                 'children' => array(),
@@ -230,6 +231,7 @@ class LoginController extends Controller
 
             // Define menu ou categoria
             $menuMain = (array) [
+                'icon' => $menuMain->icon,
                 'title' => $mainRole->title,
                 'slug' => $mainRole->slug,
                 'children' => $menuRole,
