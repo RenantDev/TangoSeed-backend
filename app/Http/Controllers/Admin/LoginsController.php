@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Entities\UserRGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginCreateRequest;
 use App\Http\Requests\LoginUpdateRequest;
@@ -60,7 +61,6 @@ class LoginsController extends Controller
      */
     public function store(LoginCreateRequest $request)
     {
-
         try {
 
             $request->merge(['remember_token' => str_random(10)]);
@@ -70,6 +70,13 @@ class LoginsController extends Controller
             $request->merge(['password' => bcrypt($request->password)]);
 
             $login = $this->repository->create($request->all());
+
+            $data = $login->toArray();
+
+            UserRGroup::create([
+                'user_id' => $data['id'],
+                'group_id' => $request->input('group'),
+            ]);
 
             $response = [
                 'message' => __('admin.users.create.success'),

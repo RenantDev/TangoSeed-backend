@@ -26,7 +26,8 @@ class LoginCreateRequest extends FormRequest
         return [
             'name' => 'required | min: 3 | max: 120',
             'email' => 'required | unique:users',
-            'password' => 'required | min: 3 | max: 30'
+            'password' => 'required | min: 3 | max: 30',
+            'group' => 'required | int'
         ];
     }
 }
