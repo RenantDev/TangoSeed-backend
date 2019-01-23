@@ -2,11 +2,11 @@
 
 namespace App\Repositories;
 
-use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Repository\Criteria\RequestCriteria;
-use App\Repositories\LoginRepository;
 use App\Entities\Login;
+use App\Repositories\LoginRepository;
 use App\Validators\LoginValidator;
+use Prettus\Repository\Criteria\RequestCriteria;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 /**
  * Class LoginRepositoryEloquent
@@ -14,6 +14,15 @@ use App\Validators\LoginValidator;
  */
 class LoginRepositoryEloquent extends BaseRepository implements LoginRepository
 {
+
+    /**
+     * @var array
+     */
+    protected $fieldSearchable = [
+        'name',
+        'email',
+    ];
+
     /**
      * Specify Model class name
      *
@@ -25,16 +34,15 @@ class LoginRepositoryEloquent extends BaseRepository implements LoginRepository
     }
 
     /**
-    * Specify Validator class name
-    *
-    * @return mixed
-    */
+     * Specify Validator class name
+     *
+     * @return mixed
+     */
     public function validator()
     {
 
         return LoginValidator::class;
     }
-
 
     /**
      * Boot up the repository, pushing criteria
