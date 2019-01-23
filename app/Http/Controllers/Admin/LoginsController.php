@@ -44,7 +44,7 @@ class LoginsController extends Controller
 
         // Verifica e lista os itens da tabela
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $logins = $this->repository->paginate($limit, ['id', 'name', 'email', 'status']);
+        $logins = $this->repository->all()->paginate($limit, ['id', 'name', 'email', 'status']);
 
         if (request()->wantsJson()) {
             return response()->json($logins);
