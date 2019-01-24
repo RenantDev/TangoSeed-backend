@@ -19,6 +19,7 @@ class LoginRepositoryEloquent extends BaseRepository implements LoginRepository
      * @var array
      */
     protected $fieldSearchable = [
+        'id',
         'name',
         'email',
     ];

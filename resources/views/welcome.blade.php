@@ -9,12 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="styles.3833ec4a149d1d242f9a.css"></head>
-  <body>
-    <app-root></app-root>
-  <script type="text/javascript" src="runtime.ec2944dd8b20ec099bf3.js"></script>
-  <script type="text/javascript" src="polyfills.d2a114715ee4d0a59fcc.js"></script>
-  <script type="text/javascript" src="scripts.6fb24ad5370e2ea9eef9.js"></script>
-  <script type="text/javascript" src="main.1ab06d0180507cb8ca37.js"></script>
-</body>
-  
+<body>
+  <app-root></app-root>
+<script type="text/javascript" src="runtime.ec2944dd8b20ec099bf3.js"></script><script type="text/javascript" src="polyfills.d2a114715ee4d0a59fcc.js"></script><script type="text/javascript" src="scripts.6fb24ad5370e2ea9eef9.js"></script><script type="text/javascript" src="main.d002729135ef5f24d6c4.js"></script></body>
 </html>
