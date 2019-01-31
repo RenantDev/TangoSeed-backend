@@ -108,7 +108,7 @@ class LoginsController extends Controller
     public function show($id)
     {
         try {
-            $login = $this->repository->find($id, ['id', 'name', 'email', 'created_at', 'updated_at']);
+            $login = $this->repository->find($id, ['id', 'name', 'email', 'status', 'created_at', 'updated_at']);
 
             if (request()->wantsJson()) {
                 return response()->json([
