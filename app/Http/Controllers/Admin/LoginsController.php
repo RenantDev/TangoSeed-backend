@@ -8,7 +8,6 @@ use App\Http\Requests\LoginCreateRequest;
 use App\Http\Requests\LoginUpdateRequest;
 use App\Repositories\LoginRepository;
 use App\Validators\LoginValidator;
-use Illuminate\Http\Request;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -108,15 +107,26 @@ class LoginsController extends Controller
     public function show($id)
     {
         try {
+            // Busca os dados do usuário
             $login = $this->repository->find($id, ['id', 'name', 'email', 'status', 'created_at', 'updated_at']);
 
+            // Busca o grupo de usuários que ele faz parte
+            $idUserGroup = UserRGroup::where('user_id', $id)->firstOrFail();
+
+            // Unifica as duas arrays de pesquisa
+            $data = array_merge($login->toArray(), ['group' => $idUserGroup->group_id]);
+
+            // Retorna um JSON apenas se for solicitado o JSON
             if (request()->wantsJson()) {
+                // Converte em JSON
                 return response()->json([
-                    'data' => $login,
+                    'data' => $data,
                 ]);
             }
         } catch (\Exception $e) {
+            // Retorna um JSON apenas se for solicitado o JSON
             if (request()->wantsJson()) {
+                // Converte em JSON
                 return response()->json([
                     'error' => true,
                     'message' => __('admin.users.info.error'),
@@ -139,25 +149,58 @@ class LoginsController extends Controller
 
         try {
 
+            // Valida as informaçoes fornecidas pelo formulario
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            if (isset($request->password)) {
-                $request->merge(['password' => bcrypt($request->password)]);
-            }
+            if(isset($request->user_id) or isset($request->password) or isset($request->email) or isset($request->name) or isset($request->group)){
 
-            $login = $this->repository->update($request->all(), $id);
+                // Caso exista uma alteração de password ele é criptografado
+                if (isset($request->password)) {
+                    $request->merge(['password' => bcrypt($request->password)]);
+                }
 
-            $response = [
-                'message' => __('admin.users.update.success'),
-                'data' => $login->toArray(),
-            ];
+                // Atualiza informações do usuário
+                $login = $this->repository->update($request->all(), $id);
 
-            if ($request->wantsJson()) {
-                return response()->json($response);
+                // Se existir uma alteração de grupo
+                if(isset($request->group)){
+                    // Atualiza grupo do usuário
+                    UserRGroup::where('user_id', $id)
+                        ->update(['group_id' => (int) $request->group]);
+
+                    // Unifica as duas arrays de pesquisa
+                    $data = array_merge($login->toArray(), ['group' => (int) $request->group]);
+                } else{
+                    // Retorna atualização sem grupo
+                    $data = array_merge($login->toArray(), ['group' => 0]);
+                }
+
+                // Monta array de retorno
+                $response = [
+                    'message' => __('admin.users.update.success'),
+                    'data' => $data
+
+                ];
+
+                // Retorna um json
+                if ($request->wantsJson()) {
+                    return response()->json($response);
+                }
+            } else{
+                // Monta array de retorno
+                $response = [
+                    'message' => __('Nenhuma informação foi alterada!'),
+                ];
+
+                // Retorna um json
+                if ($request->wantsJson()) {
+                    return response()->json($response);
+                }
             }
 
         } catch (ValidatorException $e) {
 
+            // Retorna um JSON com o erro
             if ($request->wantsJson()) {
                 return response()->json([
                     'error' => true,
