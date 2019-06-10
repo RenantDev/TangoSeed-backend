@@ -152,7 +152,7 @@ class LoginsController extends Controller
             // Valida as informaçoes fornecidas pelo formulario
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
 
-            if(isset($request->user_id) or isset($request->password) or isset($request->email) or isset($request->name) or isset($request->group)){
+            if(isset($request->user_id) or isset($request->password) or isset($request->email) or isset($request->name) or isset($request->status) or isset($request->group)){
 
                 // Caso exista uma alteração de password ele é criptografado
                 if (isset($request->password)) {
