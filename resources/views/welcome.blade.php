@@ -8,12 +8,14 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="stylesheet" href="styles.3833ec4a149d1d242f9a.css"></head>
+  <link rel="stylesheet" href="styles.css"></head>
 <body>
   <app-root></app-root>
-<script type="text/javascript" src="runtime.ec2944dd8b20ec099bf3.js"></script>
-<script type="text/javascript" src="polyfills.d2a114715ee4d0a59fcc.js"></script>
-<script type="text/javascript" src="scripts.6fb24ad5370e2ea9eef9.js"></script>
-<script type="text/javascript" src="main.d002729135ef5f24d6c4.js"></script>
+<script type="text/javascript" src="runtime.js"></script>
+<script type="text/javascript" src="polyfills.js"></script>
+<script type="text/javascript" src="styles.js"></script>
+<script type="text/javascript" src="scripts.js"></script>
+<script type="text/javascript" src="vendor.js"></script>
+<script type="text/javascript" src="main.js"></script>
 </body>
 </html>

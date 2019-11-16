@@ -33,17 +33,24 @@ class LoginController extends Controller
 
             // Se o token do frontend estiver correto valida o usuário e retorna o token de acesso
             if ($request->client_secret == $token->secret) {
-                // validação de dados de acesso
-                $response = $http->post(env('APP_URL') . '/oauth/token', [
-                    'form_params' => [
-                        'username' => $request->username,
-                        'password' => $request->password,
-                        'client_id' => env('APP_PASSPORT_ID'),
-                        'client_secret' => env('APP_PASSPORT_TOKEN'),
-                        'grant_type' => 'password',
-                        'scope' => $this->listScopes($request->username),
-                    ],
-                ]);
+
+                $verify_scope = $this->listScopes($request->username);
+
+                if ($verify_scope[0]) {
+                    // validação de dados de acesso
+                    $response = $http->post(env('APP_URL') . '/oauth/token', [
+                        'form_params' => [
+                            'username' => $request->username,
+                            'password' => $request->password,
+                            'client_id' => env('APP_PASSPORT_ID'),
+                            'client_secret' => env('APP_PASSPORT_TOKEN'),
+                            'grant_type' => 'password',
+                            'scope' => $verify_scope,
+                        ],
+                    ]);
+                } else {
+                    $this->logout();
+                }
             } else {
                 // Dados de acesso invalidos
                 $response = response(['error' => true, 'message' => __('auth.failed')], 404);
@@ -144,7 +151,7 @@ class LoginController extends Controller
     // lista menu do usuario
     public function listMenu()
     {
-        
+
         // Verifica a existencia de um login Developer
         $developerGroup = DB::table('users')->where('users.id', '=', Auth::user()->id)
             ->join('user_r_groups', 'users.id', '=', 'user_r_groups.user_id')
@@ -201,7 +208,7 @@ class LoginController extends Controller
 
 
         // Define o menu do dashboard
-        $menu = (array) [
+        $menu = (array)[
             [
                 'icon' => 'fa-home',
                 'title' => 'Dashboard',
@@ -216,21 +223,21 @@ class LoginController extends Controller
             // Define sub menu
             $menuRole = array();
             foreach ($roles as $key => $role) {
-                if($mainRole->id == $role->category_id){
-                    $newRole = (array) [
+                if ($mainRole->id == $role->category_id) {
+                    $newRole = (array)[
                         'icon' => $role->icon,
                         'title' => $role->title,
                         'slug' => $role->slug,
                         //'slug' => $mainRole->slug.'/'.$role->slug,
                     ];
-    
+
                     // adiciona um novo role a categoria
                     array_push($menuRole, $newRole);
                 }
             }
 
             // Define menu ou categoria
-            $menuMain = (array) [
+            $menuMain = (array)[
                 'icon' => $mainRole->icon,
                 'title' => $mainRole->title,
                 'slug' => $mainRole->slug,
