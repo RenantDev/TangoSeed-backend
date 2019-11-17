@@ -41,8 +41,9 @@ class GroupsController extends Controller
         // Define a quantidade de itens na pagina
         $limit = request('limit', null);
 
+        // Verifica e lista os itens da tabela
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $groups = $this->repository->paginate($limit);
+        $groups = $this->repository->paginate($limit, ['id', 'title', 'description', 'status']);
 
         if (request()->wantsJson()) {
             return response()->json($groups);

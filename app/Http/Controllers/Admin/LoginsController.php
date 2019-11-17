@@ -48,7 +48,6 @@ class LoginsController extends Controller
         if (request()->wantsJson()) {
             return response()->json($logins);
         }
-
     }
 
     /**

@@ -14,6 +14,16 @@ use App\Validators\GroupValidator;
  */
 class GroupRepositoryEloquent extends BaseRepository implements GroupRepository
 {
+
+    /**
+     * @var array
+     */
+    protected $fieldSearchable = [
+        'id',
+        'title',
+        'description',
+    ];
+
     /**
      * Specify Model class name
      *
