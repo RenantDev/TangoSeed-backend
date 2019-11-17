@@ -35,18 +35,23 @@ class LoginController extends Controller
             // Se o token do frontend estiver correto valida o usuário e retorna o token de acesso
             if ($request->client_secret == $token->secret) {
 
+                $result_scope = $this->listScopes($request->username);
 
-                // validação de dados de acesso
-                $response = $http->post(env('APP_URL') . '/oauth/token', [
-                    'form_params' => [
-                        'username' => $request->username,
-                        'password' => $request->password,
-                        'client_id' => env('APP_PASSPORT_ID'),
-                        'client_secret' => env('APP_PASSPORT_TOKEN'),
-                        'grant_type' => 'password',
-                        'scope' => $this->listScopes($request->username),
-                    ],
-                ]);
+                if ($result_scope != null) {
+                    // validação de dados de acesso
+                    $response = $http->post(env('APP_URL') . '/oauth/token', [
+                        'form_params' => [
+                            'username' => $request->username,
+                            'password' => $request->password,
+                            'client_id' => env('APP_PASSPORT_ID'),
+                            'client_secret' => env('APP_PASSPORT_TOKEN'),
+                            'grant_type' => 'password',
+                            'scope' => $result_scope,
+                        ],
+                    ]);
+                } else {
+                    $response = response(['error' => true, 'message' => __('auth.failed')], 404);
+                }
 
             } else {
                 // Dados de acesso invalidos
@@ -73,7 +78,7 @@ class LoginController extends Controller
             ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
             ->where('roles.status', '=', 1)
             ->where('roles.id', '!=', 1)
-            ->select('roles.scope', 'group_r_roles.group_id')
+            ->select('roles.scope', 'group_r_roles.group_id', 'users.status')
             ->groupBy('roles.scope')
             ->get();
 
@@ -88,14 +93,16 @@ class LoginController extends Controller
                 // O usuário do grupo Developer tem acesso a todos os recursos
                 $result = '*';
                 continue;
-            } else {
+            } elseif ($user['status'] == 1 and $user['scope'] != '') {
                 if ($i == 0) {
                     $result .= $user['scope'];
                 } else {
                     $result .= " " . $user['scope'];
                 }
+                $i++;
+            } else {
+                $result = null;
             }
-            $i++;
         }
 
         return $result;
