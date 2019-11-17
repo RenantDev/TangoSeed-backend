@@ -6,6 +6,7 @@ use GuzzleHttp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\Passport;
 
 class LoginController extends Controller
 {
@@ -34,23 +35,19 @@ class LoginController extends Controller
             // Se o token do frontend estiver correto valida o usuário e retorna o token de acesso
             if ($request->client_secret == $token->secret) {
 
-                $verify_scope = $this->listScopes($request->username);
 
-                if ($verify_scope[0]) {
-                    // validação de dados de acesso
-                    $response = $http->post(env('APP_URL') . '/oauth/token', [
-                        'form_params' => [
-                            'username' => $request->username,
-                            'password' => $request->password,
-                            'client_id' => env('APP_PASSPORT_ID'),
-                            'client_secret' => env('APP_PASSPORT_TOKEN'),
-                            'grant_type' => 'password',
-                            'scope' => $verify_scope,
-                        ],
-                    ]);
-                } else {
-                    $this->logout();
-                }
+                // validação de dados de acesso
+                $response = $http->post(env('APP_URL') . '/oauth/token', [
+                    'form_params' => [
+                        'username' => $request->username,
+                        'password' => $request->password,
+                        'client_id' => env('APP_PASSPORT_ID'),
+                        'client_secret' => env('APP_PASSPORT_TOKEN'),
+                        'grant_type' => 'password',
+                        'scope' => $this->listScopes($request->username),
+                    ],
+                ]);
+
             } else {
                 // Dados de acesso invalidos
                 $response = response(['error' => true, 'message' => __('auth.failed')], 404);
@@ -76,24 +73,27 @@ class LoginController extends Controller
             ->join('roles', 'roles.id', '=', 'group_r_roles.role_id')
             ->where('roles.status', '=', 1)
             ->where('roles.id', '!=', 1)
-            ->join('role_r_scopes', 'role_r_scopes.role_id', '=', 'roles.id')
-            ->join('scopes', 'scopes.id', '=', 'role_r_scopes.scope_id')
-            ->select('scopes.tag')
-            ->groupBy('scopes.tag')
+            ->select('roles.scope', 'group_r_roles.group_id')
+            ->groupBy('roles.scope')
             ->get();
 
         // Converte o objeto em array
         $users = json_decode(json_encode($users), true);
 
-        // Transforma a array em uma string
+        // Transforma a array em uma string com os scopes de acesso ao sistema
         $result = '';
         $i = 0;
         foreach ($users as $user) {
-            if ($user['tag'] == '*') {
+            if ($user['group_id'] == 1) {
+                // O usuário do grupo Developer tem acesso a todos os recursos
                 $result = '*';
                 continue;
             } else {
-                $result = $result . $user['tag'] . ' ';
+                if ($i == 0) {
+                    $result .= $user['scope'];
+                } else {
+                    $result .= " " . $user['scope'];
+                }
             }
             $i++;
         }

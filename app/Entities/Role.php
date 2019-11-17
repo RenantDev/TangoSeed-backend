@@ -15,6 +15,7 @@ class Role extends Model implements Transformable
         'icon',
         'title',
         'slug',
+        'scope',
         'description'
     ];
 

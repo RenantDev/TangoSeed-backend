@@ -37,7 +37,6 @@ class CreateGroupRRolesTable extends Migration
 		GroupRRole::create(['group_id' => 2, 'role_id' => 4]);
 		GroupRRole::create(['group_id' => 2, 'role_id' => 5]);
 		GroupRRole::create(['group_id' => 2, 'role_id' => 6]);
-		GroupRRole::create(['group_id' => 2, 'role_id' => 7]);
 	}
 
 	/**

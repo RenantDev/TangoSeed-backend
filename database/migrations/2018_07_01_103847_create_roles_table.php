@@ -25,6 +25,7 @@ class CreateRolesTable extends Migration
             $table->string('icon', 60)->default('fa-home');
             $table->string('title', 60);
             $table->string('slug', 60)->unique();
+            $table->string('scope', 60);
 			$table->text('description')->nullable();
 			
             $table->boolean('status')->default(true);
@@ -33,16 +34,15 @@ class CreateRolesTable extends Migration
 		});
 
 		
-		Role::create(['category_id' => 1, 'icon' => '', 'title' => 'none', 'slug' => '#', 'description' => 'none']);
-		Role::create(['category_id' => 1, 'icon' => 'fa-home', 'title' => 'Resumo Dev', 'slug' => 'resumo-dev', 'description' => 'Função para Desenvolvedor']);
+		Role::create(['category_id' => 1, 'icon' => '', 'title' => 'none', 'slug' => '#', 'scope' => '', 'description' => 'none']);
+		Role::create(['category_id' => 1, 'icon' => 'fa-home', 'title' => 'Resumo Dev', 'slug' => 'resumo-dev', 'scope' => '', 'description' => 'Função para Desenvolvedor']);
 
-		Role::create(['category_id' => 1, 'icon' => 'fa-gears', 'title' => 'Administrador', 'slug' => 'admin', 'description' => 'Administração do sistema.']);
-		
-        Role::create(['category_id' => 3, 'icon' => '', 'title' => 'Usuários', 'slug' => 'users', 'description' => 'Gerenciador de usuários do sistema']);
-        Role::create(['category_id' => 3, 'icon' => '', 'title' => 'Grupos', 'slug' => 'groups', 'description' => 'Gerenciador de grupos do sistema']);
-        Role::create(['category_id' => 3, 'icon' => '', 'title' => 'Funções', 'slug' => 'roles', 'description' => 'Gerenciador de funções do sistema']);
-        Role::create(['category_id' => 3, 'icon' => '', 'title' => 'Extenções', 'slug' => 'scopes', 'description' => 'Gerenciador de extenções do sistema']);
-		
+		Role::create(['category_id' => 1, 'icon' => 'fa-gears', 'title' => 'Administrador', 'slug' => 'admin', 'scope' => '', 'description' => 'Administração do sistema.']);
+
+        Role::create(['category_id' => 3, 'icon' => '', 'title' => 'Usuários', 'slug' => 'users', 'scope' => 'admin-users', 'description' => 'Gerenciador de usuários do sistema']);
+        Role::create(['category_id' => 3, 'icon' => '', 'title' => 'Grupos', 'slug' => 'groups', 'scope' => 'admin-groups', 'description' => 'Gerenciador de grupos do sistema']);
+        Role::create(['category_id' => 3, 'icon' => '', 'title' => 'Funções', 'slug' => 'roles', 'scope' => 'admin-roles', 'description' => 'Gerenciador de funções do sistema']);
+
 	}
 
 	/**

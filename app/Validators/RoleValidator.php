@@ -15,6 +15,7 @@ class RoleValidator extends LaravelValidator
             'icon' => 'max: 60',
             'title' => 'required | min: 3 | max: 60',
             'slug' => '',
+            'scope' => '',
             'description' => ''
         ],
         ValidatorInterface::RULE_UPDATE => [
@@ -22,6 +23,7 @@ class RoleValidator extends LaravelValidator
             'icon' => 'max: 60',
             'title' => 'min: 3 | max: 60',
             'slug' => '',
+            'scope' => '',
             'description' => ''
         ],
     ];

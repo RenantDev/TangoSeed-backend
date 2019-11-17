@@ -28,6 +28,7 @@ class RoleCreateRequest extends FormRequest
             'icon' => 'max: 60',
             'title' => 'required | min: 3 | max: 60 | unique:roles',
             'slug' => '',
+            'scope' => '',
             'description' => ''
         ];
     }

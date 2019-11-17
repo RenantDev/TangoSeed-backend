@@ -28,6 +28,7 @@ class RoleUpdateRequest extends FormRequest
             'icon' => 'max: 60',
             'title' => 'min: 3 | max: 60 | unique:roles',
             'slug' => '',
+            'scope' => '',
             'description' => ''
         ];
     }
