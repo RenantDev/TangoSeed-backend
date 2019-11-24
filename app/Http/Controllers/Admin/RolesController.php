@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use function GuzzleHttp\describe_type;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -30,7 +31,7 @@ class RolesController extends Controller
     public function __construct(RoleRepository $repository, RoleValidator $validator)
     {
         $this->repository = $repository;
-        $this->validator  = $validator;
+        $this->validator = $validator;
     }
 
 
@@ -41,18 +42,49 @@ class RolesController extends Controller
      */
     public function index()
     {
+
+        // Define a quantidade de itens na pagina
+        $limit = request('limit', null);
+
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
-        $roles = $this->repository->paginate();
+        $roles = $this->repository->paginate($limit, ['id', 'category_id', 'title', 'slug', 'scope']);
 
         if (request()->wantsJson()) {
             return response()->json($roles);
         }
     }
 
+    // Categoria de funções
+    public function list()
+    {
+
+        // Busca as funcoes no banco de dados
+        $roles = $this->repository->all(['id', 'category_id', 'title', 'slug', 'scope']);
+
+        // Cria uma array com os grupos de funcao e suas funcoes
+        $result = array();
+        $i = 0;
+        foreach ($roles AS $role) {
+            if ($role['category_id'] == 1 and $role['id'] != 1 and $role['id'] != 2) {
+                foreach ($roles AS $role_child) {
+                    if ($role_child['category_id'] == $role['id']) {
+                        $result[$role['title']][$role_child['id']] = $role_child['title'];
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        // Retorna o resultado da pesquisa
+        if (request()->wantsJson()) {
+            return response()->json($result);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  RoleCreateRequest $request
+     * @param RoleCreateRequest $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -63,7 +95,7 @@ class RolesController extends Controller
             $role = $this->repository->create($request->all());
             $response = [
                 'message' => __('admin.roles.create.success'),
-                'data'    => $role->toArray(),
+                'data' => $role->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -72,7 +104,7 @@ class RolesController extends Controller
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
+                    'error' => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
@@ -83,13 +115,13 @@ class RolesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        try{
+        try {
             $role = $this->repository->find($id);
 
             if (request()->wantsJson()) {
@@ -97,7 +129,7 @@ class RolesController extends Controller
                     'data' => $role,
                 ]);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,
@@ -110,8 +142,8 @@ class RolesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  RoleUpdateRequest $request
-     * @param  string            $id
+     * @param RoleUpdateRequest $request
+     * @param string $id
      *
      * @return Response
      */
@@ -125,7 +157,7 @@ class RolesController extends Controller
             $role = $this->repository->update($request->all(), $id);
             $response = [
                 'message' => __('admin.roles.update.success'),
-                'data'    => $role->toArray(),
+                'data' => $role->toArray(),
             ];
 
             if ($request->wantsJson()) {
@@ -134,7 +166,7 @@ class RolesController extends Controller
         } catch (ValidatorException $e) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'error'   => true,
+                    'error' => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
@@ -145,13 +177,13 @@ class RolesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        try{
+        try {
             $deleted = $this->repository->delete($id);
 
             if (request()->wantsJson()) {
@@ -160,7 +192,7 @@ class RolesController extends Controller
                     'deleted' => $deleted,
                 ]);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             if (request()->wantsJson()) {
                 return response()->json([
                     'error' => true,

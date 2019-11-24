@@ -78,6 +78,9 @@ Route::middleware(['auth:api'])->group(function () {
     // Lista de funções
     Route::get('/admin/roles', 'Admin\RolesController@index')->middleware(['scope:admin-roles']);
 
+    // Lista de funções
+    Route::get('/admin/roles/list', 'Admin\RolesController@list')->middleware(['scope:admin-roles']);
+
     // Nova função
     Route::post('/admin/roles', 'Admin\RolesController@store')->middleware(['scope:admin-roles']);
 
