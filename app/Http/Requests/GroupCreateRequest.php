@@ -26,7 +26,8 @@ class GroupCreateRequest extends FormRequest
         return [
             'title' => 'required | min: 3 | max: 60 | unique:groups',
             'description' => '',
-            'status' => ''
+            'status' => '',
+            'roles' => []
         ];
     }
 }

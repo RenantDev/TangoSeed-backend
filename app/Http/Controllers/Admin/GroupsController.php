@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 
+use App\Entities\GroupRRole;
+
 class GroupsController extends Controller
 {
 
@@ -50,7 +52,8 @@ class GroupsController extends Controller
         }
     }
 
-    function list() {
+    function list()
+    {
         $groups = $this->repository->all(['id', 'title']);
 
         if (request()->wantsJson()) {
@@ -61,21 +64,33 @@ class GroupsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  GroupCreateRequest $request
+     * @param GroupCreateRequest $request
      *
      * @return \Illuminate\Http\Response
      */
     public function store(GroupCreateRequest $request)
     {
-
         try {
+            // verifica se os campos são validos
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_CREATE);
 
+            // registra o novo grupo
             $group = $this->repository->create($request->all());
+
+            // define as funções do novo grupo
+            $roles = $request->toArray()['roles'];
+            if ($roles != null) {
+                foreach ($roles as $value) {
+                    GroupRRole::create([
+                        'role_id' => $value,
+                        'group_id' => $group->id
+                    ]);
+                }
+            }
 
             $response = [
                 'message' => __('admin.groups.create.success'),
-                'data' => $group->toArray(),
+                'data' => $group->toArray()
             ];
 
             if ($request->wantsJson()) {
@@ -85,7 +100,7 @@ class GroupsController extends Controller
             if ($request->wantsJson()) {
                 return response()->json([
                     'error' => true,
-                    'message' => $e->getMessageBag(),
+                    'message' => $e->getMessageBag()
                 ]);
             }
         }
@@ -94,7 +109,7 @@ class GroupsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -121,8 +136,8 @@ class GroupsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  GroupUpdateRequest $request
-     * @param  string            $id
+     * @param GroupUpdateRequest $request
+     * @param string $id
      *
      * @return Response
      */
@@ -157,7 +172,7 @@ class GroupsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
