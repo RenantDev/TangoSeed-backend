@@ -59,7 +59,7 @@ class RolesController extends Controller
     {
 
         // Busca as funcoes no banco de dados
-        $roles = $this->repository->all(['id', 'category_id', 'title', 'slug', 'scope', 'status']);
+        $roles = $this->repository->all(['id', 'category_id', 'title', 'description', 'slug', 'scope', 'status']);
 
         // Cria uma array com os grupos de funcao e suas funcoes
         $result = array();
@@ -70,7 +70,8 @@ class RolesController extends Controller
                     if ($role_child['category_id'] == $role['id'] and $role_child['status'] == 1) {
                         $result[$role['title']][$i] = array(
                             'id' => $role_child['id'],
-                            'title' => $role_child['title']
+                            'title' => $role_child['title'],
+                            'description' => $role_child['description']
                         );
                         $i++;
                     }
